@@ -25,6 +25,11 @@ Reuse what is listed here, never add a second one. When you set up something new
 - Theme: `src/constants/theme.ts`. Every colour, spacing, radius and font name. No hex codes anywhere else. Read colours with `useTheme()`.
 - Error state: `src/components/error-view.tsx`.
 - Icons: `assets/icons/*.png` (72 × 72, show at 24 × 24, tint with `tintColor`). Fonts: `assets/fonts/`.
+- Fonts: Rubik, loaded with `useFonts` in `src/app/_layout.tsx`. Use the names in `Fonts` from `src/constants/theme.ts`, not `fontWeight`.
+- Light mode only: `useTheme()` always returns the one palette. Never read the colour scheme.
+- Pokémon card (badge, sprite, name, ⋮): `src/components/pokemon-card.tsx`.
+- All Pokémon names and ids (list and search): `usePokemonList()` in `src/hooks/use-pokemon-list.ts`. Sprite URL: `getSpriteUrl(id)` in `src/services/pokeapi.ts`.
+- Name, number and id-from-url formatting: `src/utils/pokemon.ts`.
 
 ## Rules
 
@@ -33,6 +38,7 @@ Reuse what is listed here, never add a second one. When you set up something new
 - Every load has a loading state and an error state with a "Try again" button that calls `refetch`.
 - SQL always with `?` placeholders.
 - `Pressable`, not `TouchableOpacity`. `FlatList` for lists.
+- Images shown where you cannot set a size (like tab bar icons) need the `@3x` suffix in the file name (`pokeball@3x.png`), or they show at 72 pt instead of 24.
 - No `any`, no `as` casts (except `as const`), no `@ts-ignore`. No `console.log`.
 - Keep changes small. Do not refactor what the issue does not ask for.
 

@@ -1,21 +1,28 @@
 import { NativeTabs } from 'expo-router/native-tabs';
-import { useColorScheme } from 'react-native';
 
-import { Colors } from '@/constants/theme';
+import { Fonts } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
 
 export default function AppTabs() {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
+  const theme = useTheme();
+  const label = { fontFamily: Fonts.medium, fontSize: 12 };
 
   return (
     <NativeTabs
-      backgroundColor={colors.background}
-      indicatorColor={colors.backgroundElement}
-      labelStyle={{ selected: { color: colors.text } }}>
+      backgroundColor={theme.white}
+      indicatorColor={theme.daylight}
+      iconColor={{ default: theme.tabInactive, selected: theme.purple }}
+      labelStyle={{
+        default: { ...label, color: theme.tabInactive },
+        selected: { ...label, color: theme.purple },
+      }}>
       <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Label>Pokédex</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>Pokémons</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/home.png')}
+          src={{
+            default: require('@/assets/icons/pokeball.png'),
+            selected: require('@/assets/icons/pokeball-filled.png'),
+          }}
           renderingMode="template"
         />
       </NativeTabs.Trigger>

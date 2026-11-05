@@ -1,0 +1,1098 @@
+
+❯ Implement issue #1. The spec is in specs/features/list.md, the design values
+  are in specs/design.md. Follow AGENTS.md. Only touch what this feature needs.
+  Ask me before adding a dependency. The app is light mode only, so also make
+  sure it never switches to dark mode. First post your plan on the issue, then
+  wait for my go.
+
+⏺ I'll start by reading the issue, the specs, and the current code.
+
+  Read 3 files, ran 1 shell command (ctrl+o to expand)
+
+⏺ The issue output didn't show up; I'll fetch it again and read the existing
+  source files.
+
+  Read 8 files, ran 1 shell command (ctrl+o to expand)
+
+⏺ gh issue view printed nothing, so I'll query the issue as JSON and read the
+  remaining template files.
+
+  Read 2 files, ran 1 shell command (ctrl+o to expand)
+
+⏺ Next I'll read the detail spec (for the route a card opens) and the
+  options-menu spec (it uses the card).
+
+  Read 2 files, listed 1 directory (ctrl+o to expand)
+
+⏺ AGENTS.md says to check the SDK 58 docs before touching Expo APIs. I'll fetch
+  the font, splash-screen and color-scheme pages, and read the installed
+  NativeTabs types locally.
+
+⏺ web-fetch(Fetch Expo SDK 58 docs)
+  ⎿  Received 4.4KB
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ The docs confirm that useFonts works in Expo Go, but the splash config won't
+  show there and userInterfaceStyle needs expo-system-ui on Android, which is
+  already installed. Next I'll check the tab icon props and the template token
+  usage.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ I've drafted the plan and I'm flagging the main decision: the detail route
+  doesn't exist yet, so a push to /pokemon/[id] won't typecheck with typedRoutes
+  on. I'm posting it to the issue now.
+
+  Made 1 scratchpad edit +80, ran 1 shell command (ctrl+o to expand)
+
+⏺ I've posted the plan and task list on issue #1:
+  https://github.com/FatmanurV/pokedex/issues/1#issuecomment-6669570053. I
+  haven't written any code yet and won't until you give the go.
+
+  The plan needs no new dependencies. To keep the app light-only, I'll remove
+  every place the code reads the phone's colour scheme. useTheme() will return
+  one palette, and app.json gets userInterfaceStyle: "light". The colours then
+  can't switch, even if Expo Go ignores that setting.
+
+  Questions for you before I start:
+
+  1. Tapping a card: the detail screen doesn't exist yet. Typed routes are on,
+     so linking to /pokemon/[id] would fail tsc. I'd add a small placeholder
+     src/app/pokemon/[id].tsx that the Detail issue replaces. Or should tapping
+     wait until the Detail issue?
+  2. Values the design spec doesn't give: I'd use 12 for the card radius and 4
+     for the badge radius. The card shadow would be midnight at about 8% (blur
+     16, 4 down). Tell me if the Figma says otherwise.
+  3. Long names: React Native cuts them with …, not .. as in the design. Is that
+     OK?
+
+  Things to check on your phone:
+  - Splash: Expo Go ignores the splash in app.json and shows the app icon
+    instead. In Expo Go, the logo comes from the in-app splash overlay, which
+    I'll switch to the Pokémon logo on daylight.
+  - Tab icon size: pokeball.png might show too big in the tab bar. If it does,
+    I'd add an @3x copy.
+  - iOS tab bar: it might still follow dark mode in Expo Go. Please check once
+    with your phone in dark mode.
+
+❯ Go, with these answers and changes:
+
+  Yes, add the minimal placeholder src/app/pokemon/[id].tsx. Keep it really
+  minimal: only show the number from the id, no data fetching. Issue #3
+  replaces it.
+  Radius 12 for cards, 4 for the badge and the shadow token are fine.
+  … for long names is fine.
+  Change: the selected tab should use pokeball-filled.png (purple), the
+  unselected tab pokeball.png, as in the Figma. Use the selected-icon prop of
+  NativeTabs if it has one.
+  Tab icon size and dark mode in the tab bar: I will check on my phone after
+  the build.
+
+  Tick off the tasks in your plan comment while you build.
+
+⏺ Go received. First I'll check how NativeTabs takes a selected icon.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ NativeTabs has the prop you asked about: src={{ default, selected }}. I'll
+  check the tab-bar colour props, then start with the theme.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+⏺ Now writing the theme, light-only useTheme, services, utils and hook.
+
+⏺ Write(src/constants/theme.ts)
+  ⎿  Added 47 lines, removed 51 lines
+      1  /**
+      2 - * Below are the colors that are used in the app. The colors are
+        - defined in the light and dark mode.                            
+      3 - * There are many other ways to style your app. For example, [Na
+        -tivewind](https://www.nativewind.dev/), [Tamagui](https://tamagu
+        -i.dev/), [unistyles](https://reactnativeunistyles.vercel.app), e
+        -tc.                                                             
+      2 + * Every colour, spacing, radius and font name in the app. Value
+        +s from specs/design.md.                                         
+      3 + * The app is light mode only, so there is one palette.         
+      4   */
+      5  
+      6  import '@/global.css';
+     ...
+       8  import { Platform } from 'react-native';
+       9  
+      10  export const Colors = {
+      11 -  light: {                                                     
+      12 -    text: '#22303C',                                           
+      13 -    background: '#F5F2EC',                                     
+      14 -    backgroundElement: '#F0F0F3',                              
+      15 -    backgroundSelected: '#E0E1E6',                             
+      16 -    textSecondary: '#60646C',                                  
+      17 -    card: '#FFFFFF',                                           
+      18 -    badge: '#2E7D5B',                                          
+      19 -    badgeText: '#FFFFFF',                                      
+      20 -  },                                                           
+      21 -  dark: {                                                      
+      22 -    text: '#F2F4F5',                                           
+      23 -    background: '#171A1D',                                     
+      24 -    backgroundElement: '#282E33',                              
+      25 -    backgroundSelected: '#3A4248',                             
+      26 -    textSecondary: '#B4BDC4',                                  
+      27 -    card: '#202529',                                           
+      28 -    badge: '#347A59',                                          
+      29 -    badgeText: '#FFFFFF',                                      
+      30 -  },                                                           
+      11 +  midnight: '#0E0940',                                         
+      12 +  purple: '#5631E8',                                           
+      13 +  red: '#FF4F68',                                              
+      14 +  daylight: '#EDF6FF',                                         
+      15 +  white: '#FFFFFF',                                            
+      16 +  cardImage: '#F6F6FF',                                        
+      17 +  chip: 'rgba(14, 9, 64, 0.08)',                               
+      18 +  textMuted: 'rgba(14, 9, 64, 0.65)',                          
+      19 +  textFaint: 'rgba(14, 9, 64, 0.3)',                           
+      20 +  tabInactive: 'rgba(14, 9, 64, 0.5)',                         
+      21 +  divider: 'rgba(14, 9, 64, 0.15)',                            
+      22 +  track: 'rgba(14, 9, 64, 0.05)',                              
+      23 +  shadow: 'rgba(14, 9, 64, 0.08)',                             
+      24  } as const;
+      25  
+      33 -export type ThemeColor = keyof typeof Colors.light & keyof type
+         -of Colors.dark;                                                
+      26 +export type ThemeColor = keyof typeof Colors;                  
+      27  
+      35 -export const Fonts = Platform.select({                         
+      36 -  ios: {                                                       
+      37 -    /** iOS `UIFontDescriptorSystemDesignDefault` */           
+      38 -    sans: 'system-ui',                                         
+      39 -    /** iOS `UIFontDescriptorSystemDesignSerif` */             
+      40 -    serif: 'ui-serif',                                         
+      41 -    /** iOS `UIFontDescriptorSystemDesignRounded` */           
+      42 -    rounded: 'ui-rounded',                                     
+      43 -    /** iOS `UIFontDescriptorSystemDesignMonospaced` */        
+      44 -    mono: 'ui-monospace',                                      
+      45 -  },                                                           
+      46 -  default: {                                                   
+      47 -    sans: 'normal',                                            
+      48 -    serif: 'serif',                                            
+      49 -    rounded: 'normal',                                         
+      50 -    mono: 'monospace',                                         
+      51 -  },                                                           
+      52 -  web: {                                                       
+      53 -    sans: 'var(--font-display)',                               
+      54 -    serif: 'var(--font-serif)',                                
+      55 -    rounded: 'var(--font-rounded)',                            
+      56 -    mono: 'var(--font-mono)',                                  
+      57 -  },                                                           
+      58 -});                                                            
+      28 +export const TypeColors = {                                    
+      29 +  normal: '#9099A2',                                           
+      30 +  fighting: '#CE3F6A',                                         
+      31 +  flying: '#93A9E2',                                           
+      32 +  poison: '#AB6AC8',                                           
+      33 +  ground: '#D87645',                                           
+      34 +  rock: '#C4BA85',                                             
+      35 +  bug: '#8FBF2B',                                              
+      36 +  ghost: '#546AA6',                                            
+      37 +  steel: '#5A8FA1',                                            
+      38 +  fire: '#FF4F68',                                             
+      39 +  water: '#4D90D6',                                            
+      40 +  grass: '#64BC55',                                            
+      41 +  electric: '#FFCF00',                                         
+      42 +  psychic: '#830CB9',                                          
+      43 +  ice: '#7DE0D0',                                              
+      44 +  dragon: '#0670BE',                                           
+      45 +  dark: '#5B5265',                                             
+      46 +  fairy: '#EB90E6',                                            
+      47 +  shadow: '#5C5262',                                           
+      48 +  unknown: '#B6B6B6',                                          
+      49 +} as const;                                                    
+      50  
+      51 +/** Rubik, loaded with `useFonts` in `src/app/_layout.tsx`. The
+         + names are the keys used there. */                             
+      52 +export const Fonts = {                                         
+      53 +  regular: 'Rubik-Regular',                                    
+      54 +  medium: 'Rubik-Medium',                                      
+      55 +  semiBold: 'Rubik-SemiBold',                                  
+      56 +  bold: 'Rubik-Bold',                                          
+      57 +} as const;                                                    
+      58 +                                                               
+      59  export const Spacing = {
+      60    half: 2,
+      61    one: 4,
+     ...
+      69  export const BottomTabInset = Platform.select({ ios: 50, androi
+          d: 80 }) ?? 0;
+      70  export const MaxContentWidth = 800;
+      71  
+      73 -export const Radius = { s: 8, m: 12, l: 16 } as const;         
+      74 -                                                               
+      75 -// Colours the template used as loose hex codes.               
+      76 -export const Brand = { link: '#3c87f7', splash: '#208AEF' } as 
+         -const;                                                         
+      72 +export const Radius = { xs: 4, s: 8, m: 12, l: 16 } as const;  
+
+⏺ Write(src/hooks/use-theme.ts)
+  ⎿  Added 2 lines, removed 10 lines
+       1 -/**                                                            
+       2 - * Learn more about light and dark modes:                      
+       3 - * https://docs.expo.dev/guides/color-schemes/                 
+       4 - */                                                            
+       5 -                                                               
+       1  import { Colors } from '@/constants/theme';
+       7 -import { useColorScheme } from '@/hooks/use-color-scheme';     
+       2  
+       3 +/** The app is light mode only: always the same palette, whatev
+         +er the phone's setting. */                                     
+       4  export function useTheme() {
+      10 -  const scheme = useColorScheme();                             
+      11 -  const theme = scheme === 'dark' ? 'dark' : 'light';          
+      12 -                                                               
+      13 -  return Colors[theme];                                        
+       5 +  return Colors;                                               
+       6  }
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ Write(src/utils/pokemon.ts)
+  ⎿  Wrote 19 lines to src/utils/pokemon.ts
+       1 /** `https://pokeapi.co/api/v2/pokemon/25/` → 25 */
+       2 export function getIdFromUrl(url: string): number {
+       3   const parts = url.split('/').filter(Boolean);
+       4   return Number(parts[parts.length - 1]);
+       5 }
+       6
+       7 /** `mr-mime` → `Mr Mime` */
+       8 export function formatName(name: string): string {
+       9   return name
+      10     .split('-')
+     … +9 lines (ctrl+o to expand)
+
+⏺ Write(src/services/pokeapi.ts)
+  ⎿  Wrote 27 lines to src/services/pokeapi.ts
+       1 import { getIdFromUrl } from '@/utils/pokemon';
+       2
+       3 const API_URL = 'https://pokeapi.co/api/v2';
+       4 const SPRITES_URL = 'https://raw.githubusercontent.com/PokeAPI/s
+         prites/master/sprites/pokemon';
+       5
+       6 type NamedApiResource = { name: string; url: string };
+       7
+       8 type PokemonListResponse = {
+       9   count: number;
+     … +18 lines (ctrl+o to expand)
+
+⏺ Write(src/hooks/use-pokemon-list.ts)
+  ⎿  Wrote 14 lines to src/hooks/use-pokemon-list.ts
+       1 import { useQuery } from '@tanstack/react-query';
+       2
+       3 import { getPokemonList } from '@/services/pokeapi';
+       4
+       5 const ONE_HOUR = 60 * 60 * 1000;
+       6
+       7 /** Every Pokémon name and id. Used by the list and by search. *
+         /
+       8 export function usePokemonList() {
+       9   return useQuery({
+     … +5 lines (ctrl+o to expand)
+
+⏺ The theme, utils, service and hook are written. Next: the root layout, splash
+  and tab bar.
+
+⏺ Write(src/app/_layout.tsx)
+  ⎿  Added 25 lines, removed 4 lines
+       1  import { QueryClient, QueryClientProvider } from '@tanstack/rea
+          ct-query';
+       2 -import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from '
+         -expo-router';                                                  
+       2 +import { useFonts } from 'expo-font';                          
+       3 +import { DefaultTheme, Stack, ThemeProvider } from 'expo-router
+         +';                                                             
+       4  import * as SplashScreen from 'expo-splash-screen';
+       4 -import { useColorScheme } from 'react-native';                 
+       5 +import { StatusBar } from 'expo-status-bar';                   
+       6  
+       7  import { AnimatedSplashOverlay } from '@/components/animated-ic
+          on';
+       8 +import { Colors, Fonts } from '@/constants/theme';             
+       9  
+      10  SplashScreen.preventAutoHideAsync();
+      11  
+      12  const queryClient = new QueryClient();
+      13  
+      14 +// Light mode only: always the light navigation theme, on the d
+         +esign's background.                                            
+      15 +const navigationTheme = {                                      
+      16 +  ...DefaultTheme,                                             
+      17 +  colors: { ...DefaultTheme.colors, background: Colors.daylight
+         + },                                                            
+      18 +};                                                             
+      19 +                                                               
+      20  export default function RootLayout() {
+      13 -  const colorScheme = useColorScheme();                        
+      21 +  const [fontsLoaded, fontError] = useFonts({                  
+      22 +    [Fonts.regular]: require('@/assets/fonts/Rubik-Regular.ttf'
+         +),                                                             
+      23 +    [Fonts.medium]: require('@/assets/fonts/Rubik-Medium.ttf'),
+      24 +    [Fonts.semiBold]: require('@/assets/fonts/Rubik-SemiBold.tt
+         +f'),                                                           
+      25 +    [Fonts.bold]: require('@/assets/fonts/Rubik-Bold.ttf'),    
+      26 +  });                                                          
+      27 +                                                               
+      28 +  // Keep the splash screen up until Rubik is ready. On a font 
+         +error, go on with the system font.                             
+      29 +  if (!fontsLoaded && !fontError) {                            
+      30 +    return null;                                               
+      31 +  }                                                            
+      32 +                                                               
+      33    return (
+      15 -    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : 
+         -DefaultTheme}>                                                 
+      34 +    <ThemeProvider value={navigationTheme}>                    
+      35 +      <StatusBar style="dark" />                               
+      36        <AnimatedSplashOverlay />
+      37        <QueryClientProvider client={queryClient}>
+      38          <Stack>
+      39            <Stack.Screen name="(tabs)" options={{ headerShown: f
+          alse }} />
+      40 +          <Stack.Screen name="pokemon/[id]" options={{ title: '
+         +' }} />                                                        
+      41          </Stack>
+      42        </QueryClientProvider>
+      43      </ThemeProvider>
+⏺ Update(src/components/animated-icon.tsx)
+  ⎿  Added 1 line, removed 1 line
+      35      },
+      36    });
+      37  
+      38 -  const image = <Image style={styles.image} source={require('@/
+         -assets/images/expo-logo.png')} />;                             
+      38 +  const image = <Image style={styles.logo} source={require('@/a
+         +ssets/images/pokemon-logo.png')} />;                           
+      39  
+      40    return animate ? (
+      41      <Animated.View
+
+⏺ Update(src/components/animated-icon.tsx)
+  ⎿  Added 5 lines
+      133      width: 76,
+      134      height: 71,
+      135    },
+      136 +  // pokemon-logo.png is 648 × 237 at 3x.                     
+      137 +  logo: {                                                     
+      138 +    width: 216,                                               
+      139 +    height: 79,                                               
+      140 +  },                                                          
+      141    background: {
+      142      borderRadius: 40,
+      143      experimental_backgroundImage: `linear-gradient(180deg, #3C
+           9FFE, #0274DF)`,
+
+⏺ Update(src/components/animated-icon.tsx)
+  ⎿  Added 1 line, removed 1 line
+      147    },
+      148    splashOverlay: {
+      149      ...StyleSheet.absoluteFill,
+      150 -    backgroundColor: Brand.splash,                            
+      150 +    backgroundColor: Colors.daylight,                         
+      151      alignItems: 'center',
+      152      justifyContent: 'center',
+      153      zIndex: 1000,
+
+⏺ Update(src/components/animated-icon.tsx)
+  ⎿  Added 1 line, removed 1 line
+       5  import Animated, { Easing, Keyframe } from 'react-native-reanim
+          ated';
+       6  import { scheduleOnRN } from 'react-native-worklets';
+       7  
+       8 -import { Brand } from '@/constants/theme';                     
+       8 +import { Colors } from '@/constants/theme';                    
+       9  
+      10  const INITIAL_SCALE_FACTOR = Dimensions.get('screen').height / 
+          90;
+      11  const DURATION = 600;
+
+⏺ Update(app.json)
+  ⎿  Added 1 line, removed 1 line
+       6      "orientation": "portrait",
+       7      "icon": "./assets/images/icon.png",
+       8      "scheme": "pokedex",
+       9 -    "userInterfaceStyle": "automatic",                         
+       9 +    "userInterfaceStyle": "light",                             
+      10      "ios": {
+      11        "icon": "./assets/expo.icon"
+      12      },
+
+⏺ Update(app.json)
+  ⎿  Added 3 lines, removed 3 lines
+      28        [
+      29          "expo-splash-screen",
+      30          {
+      31 -          "backgroundColor": "#208AEF",                        
+      32 -          "image": "./assets/images/splash-icon.png",          
+      33 -          "imageWidth": 76                                     
+      31 +          "backgroundColor": "#EDF6FF",                        
+      32 +          "image": "./assets/images/pokemon-logo.png",         
+      33 +          "imageWidth": 216                                    
+      34          }
+      35        ],
+      36        "expo-sqlite",
+
+⏺ Write(src/components/app-tabs.tsx)
+  ⎿  Added 16 lines, removed 9 lines
+       1  import { NativeTabs } from 'expo-router/native-tabs';
+       2 -import { useColorScheme } from 'react-native';                 
+       2  
+       4 -import { Colors } from '@/constants/theme';                    
+       3 +import { Fonts } from '@/constants/theme';                     
+       4 +import { useTheme } from '@/hooks/use-theme';                  
+       5  
+       6  export default function AppTabs() {
+       7 -  const scheme = useColorScheme();                             
+       8 -  const colors = Colors[scheme === 'dark' ? 'dark' : 'light']; 
+       7 +  const theme = useTheme();                                    
+       8 +  const label = { fontFamily: Fonts.medium, fontSize: 12 };    
+       9  
+      10    return (
+      11      <NativeTabs
+      12 -      backgroundColor={colors.background}                      
+      13 -      indicatorColor={colors.backgroundElement}                
+      14 -      labelStyle={{ selected: { color: colors.text } }}>       
+      12 +      backgroundColor={theme.white}                            
+      13 +      indicatorColor={theme.daylight}                          
+      14 +      iconColor={{ default: theme.tabInactive, selected: theme.
+         +purple }}                                                      
+      15 +      labelStyle={{                                            
+      16 +        default: { ...label, color: theme.tabInactive },       
+      17 +        selected: { ...label, color: theme.purple },           
+      18 +      }}>                                                      
+      19        <NativeTabs.Trigger name="index">
+      16 -        <NativeTabs.Trigger.Label>Pokédex</NativeTabs.Trigger.L
+         -abel>                                                          
+      20 +        <NativeTabs.Trigger.Label>Pokémons</NativeTabs.Trigger.
+         +Label>                                                         
+      21          <NativeTabs.Trigger.Icon
+      18 -          src={require('@/assets/images/tabIcons/home.png')}   
+      22 +          src={{                                               
+      23 +            default: require('@/assets/icons/pokeball.png'),   
+      24 +            selected: require('@/assets/icons/pokeball-filled.p
+         +ng'),                                                          
+      25 +          }}                                                   
+      26            renderingMode="template"
+      27          />
+      28        </NativeTabs.Trigger>
+
+⏺ Write(src/components/error-view.tsx)
+  ⎿  Added 6 lines, removed 4 lines
+      1  import { Pressable, StyleSheet, Text, View } from 'react-native'
+         ;
+      2  
+      3 -import { Radius, Spacing } from '@/constants/theme';            
+      3 +import { Fonts, Radius, Spacing } from '@/constants/theme';     
+      4  import { useTheme } from '@/hooks/use-theme';
+      5  
+      6  type Props = { message: string; onRetry: () => void };
+     ...
+      10  
+      11    return (
+      12      <View style={styles.container}>
+      13 -      <Text style={{ color: theme.text }}>{message}</Text>     
+      14 -      <Pressable onPress={onRetry} style={[styles.button, { bac
+         -kgroundColor: theme.badge }]}>                                 
+      15 -        <Text style={{ color: theme.badgeText }}>Try again</Tex
+         -t>                                                             
+      13 +      <Text style={[styles.message, { color: theme.midnight }]}
+         +>{message}</Text>                                              
+      14 +      <Pressable onPress={onRetry} style={[styles.button, { bac
+         +kgroundColor: theme.purple }]}>                                
+      15 +        <Text style={[styles.buttonLabel, { color: theme.white 
+         +}]}>Try again</Text>                                           
+      16        </Pressable>
+      17      </View>
+      18    );
+     ...
+      20  
+      21  const styles = StyleSheet.create({
+      22    container: { flex: 1, alignItems: 'center', justifyContent: '
+          center', gap: Spacing.three },
+      23 +  message: { fontFamily: Fonts.regular, fontSize: 16, textAlign
+         +: 'center' },                                                  
+      24    button: { paddingHorizontal: Spacing.three, paddingVertical: 
+          Spacing.two, borderRadius: Radius.s },
+      25 +  buttonLabel: { fontFamily: Fonts.semiBold, fontSize: 16 },   
+      26  });
+
+⏺ Tab bar, splash, layout and error view are done. Ticking the first tasks on
+  the issue, then building the card, screen and placeholder.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ Write(src/components/pokemon-card.tsx)
+  ⎿  Wrote 85 lines to src/components/pokemon-card.tsx
+       1 import { Image } from 'expo-image';
+       2 import { Pressable, StyleSheet, Text, View } from 'react-native'
+         ;
+       3
+       4 import { Fonts, Radius, Spacing } from '@/constants/theme';
+       5 import { useTheme } from '@/hooks/use-theme';
+       6 import { formatName, formatNumber } from '@/utils/pokemon';
+       7
+       8 type Props = {
+       9   id: number;
+     … +76 lines (ctrl+o to expand)
+
+⏺ Write(src/app/(tabs)/index.tsx)
+  ⎿  Added 57 lines, removed 7 lines
+       1 -import { StyleSheet, Text } from 'react-native';               
+       1 +import { router } from 'expo-router';                          
+       2 +import { ActivityIndicator, FlatList, StyleSheet, Text, useWind
+         +owDimensions, View } from 'react-native';                      
+       3  import { SafeAreaView } from 'react-native-safe-area-context';
+       4  
+       4 -import { Spacing } from '@/constants/theme';                   
+       5 +import { ErrorView } from '@/components/error-view';           
+       6 +import { PokemonCard } from '@/components/pokemon-card';       
+       7 +import { Fonts, Spacing } from '@/constants/theme';            
+       8 +import { usePokemonList } from '@/hooks/use-pokemon-list';     
+       9  import { useTheme } from '@/hooks/use-theme';
+      10 +import { getSpriteUrl } from '@/services/pokeapi';             
+      11  
+       7 -// Placeholder. Issue "Pokémon list" replaces this screen.     
+      12 +const SIDE_PADDING = Spacing.four;                             
+      13 +const GAP = Spacing.three;                                     
+      14 +                                                               
+      15  export default function HomeScreen() {
+      16    const theme = useTheme();
+      17 +  const { width } = useWindowDimensions();                     
+      18 +  const { data, error, isPending, refetch } = usePokemonList();
+      19 +  const cardWidth = (width - SIDE_PADDING * 2 - GAP) / 2;      
+      20  
+      21 +  let content;                                                 
+      22 +  if (isPending) {                                             
+      23 +    content = (                                                
+      24 +      <View style={styles.center}>                             
+      25 +        <ActivityIndicator size="large" color={theme.purple} />
+      26 +      </View>                                                  
+      27 +    );                                                         
+      28 +  } else if (data) {                                           
+      29 +    content = (                                                
+      30 +      <FlatList                                                
+      31 +        data={data}                                            
+      32 +        numColumns={2}                                         
+      33 +        keyExtractor={(item) => String(item.id)}               
+      34 +        renderItem={({ item }) => (                            
+      35 +          <PokemonCard                                         
+      36 +            id={item.id}                                       
+      37 +            name={item.name}                                   
+      38 +            spriteUrl={getSpriteUrl(item.id)}                  
+      39 +            width={cardWidth}                                  
+      40 +            onPress={() => router.push({ pathname: '/pokemon/[i
+         +d]', params: { id: item.id } })}                               
+      41 +          />                                                   
+      42 +        )}                                                     
+      43 +        columnWrapperStyle={styles.row}                        
+      44 +        contentContainerStyle={styles.list}                    
+      45 +        initialNumToRender={8}                                 
+      46 +      />                                                       
+      47 +    );                                                         
+      48 +  } else {                                                     
+      49 +    content = <ErrorView message={error?.message ?? 'Something 
+         +went wrong'} onRetry={() => refetch()} />;                     
+      50 +  }                                                            
+      51 +                                                               
+      52    return (
+      12 -    <SafeAreaView edges={['top']} style={[styles.container, { b
+         -ackgroundColor: theme.background }]}>                          
+      13 -      <Text style={[styles.title, { color: theme.text }]}>Pokéd
+         -ex</Text>                                                      
+      53 +    <SafeAreaView edges={['top']} style={[styles.container, { b
+         +ackgroundColor: theme.daylight }]}>                            
+      54 +      <Text style={[styles.title, { color: theme.midnight }]}>A
+         +ll Pokémon</Text>                                              
+      55 +      {content}                                                
+      56      </SafeAreaView>
+      57    );
+      58  }
+      59  
+      60  const styles = StyleSheet.create({
+      19 -  container: { flex: 1, paddingHorizontal: Spacing.three },    
+      20 -  title: { fontSize: 28, fontWeight: 'bold', paddingVertical: S
+         -pacing.two },                                                  
+      61 +  container: { flex: 1 },                                      
+      62 +  title: {                                                     
+      63 +    fontFamily: Fonts.bold,                                    
+      64 +    fontSize: 24,                                              
+      65 +    paddingHorizontal: SIDE_PADDING,                           
+      66 +    paddingVertical: Spacing.three,                            
+      67 +  },                                                           
+      68 +  center: { flex: 1, alignItems: 'center', justifyContent: 'cen
+         +ter' },                                                        
+      69 +  list: { paddingHorizontal: SIDE_PADDING, paddingBottom: Spaci
+         +ng.four, gap: GAP },                                           
+      70 +  row: { gap: GAP },                                           
+      71  });
+
+⏺ Write(src/app/pokemon/[id].tsx)
+  ⎿  Wrote 23 lines to src/app/pokemon/[id].tsx
+       1 import { useLocalSearchParams } from 'expo-router';
+       2 import { StyleSheet, Text, View } from 'react-native';
+       3
+       4 import { Fonts } from '@/constants/theme';
+       5 import { useTheme } from '@/hooks/use-theme';
+       6 import { formatNumber } from '@/utils/pokemon';
+       7
+       8 // Placeholder so a card can open this route. Issue #3 "Detail"
+         replaces this screen.
+       9 export default function PokemonDetailScreen() {
+     … +14 lines (ctrl+o to expand)
+
+⏺ The utils tick failed because of the / in its sed pattern, so I'll redo it
+  with the next update. Running the typecheck and lint now.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ Lint is clean. The tsc error is only the stale typed-routes file in
+  .expo/types, which is regenerated when the dev server starts. I'll check how
+  to regenerate it.
+
+  Listed 1 directory (ctrl+o to expand)
+
+⏺ Starting the dev server briefly regenerates the route types. I'll do that and
+  then re-run tsc.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ tsc and lint are both clean now. Next I'll check the dev-server log for
+  warnings and confirm the API response matches the spec (~1350 entries, id from
+  url).
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ The API returns 1351 Pokémon, as the spec expects, and the id parses from url.
+  Last step is the AGENTS.md shared-setup lines.
+
+⏺ Update(AGENTS.md)
+  ⎿  Added 5 lines
+      25  - Theme: `src/constants/theme.ts`. Every colour, spacing, radiu
+          s and font name. No hex codes anywhere else. Read colours with 
+          `useTheme()`.
+      26  - Error state: `src/components/error-view.tsx`.
+      27  - Icons: `assets/icons/*.png` (72 × 72, show at 24 × 24, tint w
+          ith `tintColor`). Fonts: `assets/fonts/`.
+      28 +- Fonts: Rubik, loaded with `useFonts` in `src/app/_layout.tsx`
+         +. Use the names in `Fonts` from `src/constants/theme.ts`, not `
+         +fontWeight`.                                                   
+      29 +- Light mode only: `useTheme()` always returns the one palette.
+         + Never read the colour scheme.                                 
+      30 +- Pokémon card (badge, sprite, name, ⋮): `src/components/pokemo
+         +n-card.tsx`.                                                   
+      31 +- All Pokémon names and ids (list and search): `usePokemonList(
+         +)` in `src/hooks/use-pokemon-list.ts`. Sprite URL: `getSpriteUr
+         +l(id)` in `src/services/pokeapi.ts`.                           
+      32 +- Name, number and id-from-url formatting: `src/utils/pokemon.t
+         +s`.                                                            
+      33  
+      34  ## Rules
+      35  
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ Issue #1 is built and every task on the plan comment is ticked. npx expo lint
+  and npx tsc --noEmit are both clean. I haven't run the app on a device, so
+  everything on screen is still for you to check on your phone. Nothing is
+  committed.
+
+  What I built:
+  - Data: getPokemonList() in pokeapi.ts (src/services/pokeapi.ts) makes the
+    single request and takes each id from url. use-pokemon-list.ts
+    (src/hooks/use-pokemon-list.ts) wraps it with a 1-hour staleTime. Name and
+    number formatting is in pokemon.ts (src/utils/pokemon.ts). The API currently
+    returns 1351 Pokémon.
+  - Card: pokemon-card.tsx (src/components/pokemon-card.tsx) takes its data
+    through props: radius 12, badge radius 4, soft shadow, … for long names. The
+    ⋮ is shown but does nothing yet. A missing sprite leaves the image area
+    empty. 1351 is odd, so the card width is calculated to keep the last card at
+    half width.
+  - Home screen: index.tsx (src/app/(tabs)/index.tsx) shows "All Pokémon" over a
+    2-column FlatList, with a spinner while loading and ErrorView with "Try
+    again" on failure. Tapping a card opens pokemon/[id].tsx
+    (src/app/pokemon/[id].tsx), a placeholder that shows only #025.
+  - Tab bar: app-tabs.tsx (src/components/app-tabs.tsx) shows "Pokémons".
+    Selected uses pokeball-filled in purple, unselected uses pokeball.
+    NativeTabs supports this through src={{ default, selected }}.
+  - Light mode only:
+    - theme.ts (src/constants/theme.ts) now has one palette of the design
+      tokens, plus type colours and the Rubik font names.
+    - useTheme() always returns that palette, and use-color-scheme.ts is
+      deleted.
+    - The root layout uses the light navigation theme and a dark status bar.
+    - app.json sets userInterfaceStyle: "light".
+  - Fonts and splash:
+    - Rubik loads in _layout.tsx (src/app/_layout.tsx). The splash stays up
+      until the fonts are ready.
+    - The splash in app.json is the Pokémon logo on #EDF6FF.
+    - animated-icon.tsx (src/components/animated-icon.tsx) shows the same logo.
+      Expo Go ignores the app.json splash, so in Expo Go this overlay is the
+      logo you'll see.
+  - AGENTS.md: "Shared setup" now has lines for the fonts, the light-only rule,
+    the card, usePokemonList, and the format utils.
+
+  Things you may run into:
+  - On a fresh checkout, the first tsc errors on /pokemon/[id] until the dev
+    server has started once. Starting it regenerates the route types in
+    .expo/types.
+  - I also updated error-view.tsx (src/components/error-view.tsx) to the new
+    tokens and Rubik, because the old tokens no longer exist.
+
+  Still for you to check on your phone: the tab icon size, and the tab bar with
+  the phone in dark mode.
+
+❯ On my iPhone the pokéball tab icon is far too big: it covers the “Pokémons”
+  label. You flagged this risk in the plan. Fix it the way you proposed, so the
+  icons show at 24 × 24. Change nothing else.
+
+⏺ I'll add the @3x copies I proposed for both tab icons, pokeball and
+  pokeball-filled. No code changes. Then I'll check that Metro picks them up as
+  3x.
+
+  Ran 1 shell command (ctrl+o to expand)
+⏺ The files are there, but my grep matched nothing in the bundle. Retrying with
+  a looser search to see how the asset entries look.
+
+  Ran 1 shell command (ctrl+o to expand)
+  ⎿  Not run · permission denied
+     │ Reason: The user doesn't want to proceed with this tool use. The tool use was rejected (eg. if it was a file edit, the new_string was NOT written to the file). The user provided the following reason for the …
+
+⏺ I added pokeball@3x.png and pokeball-filled@3x.png to assets/icons/, as
+  straight copies of the existing 72 × 72 PNGs. I changed nothing else: no code
+  edits, and the old files are still there.
+
+  With the @3x suffix, React Native should treat the 72 px images as 3x and show
+  them at 24 × 24 points. I haven't confirmed this: I stopped the bundle check
+  when you asked. That leaves your phone as the test.
+
+  Restart Expo with npx expo start -c before you look. Metro may keep the old
+  asset scale cached.
+
+❯ Review before commit, two small things:
+
+  src/components/animated-icon.tsx still has hex colours (
+  #3C9FFE,
+  #0274DF) and the old Expo logo styles. If that code is no longer used, remove
+  it. If it is used, move the colours to the theme.
+  Add a rule to AGENTS.md from the icon fix: images shown where you cannot set
+  a size (like tab bar icons) need the @3x suffix in the file name.
+
+  Then run lint and tsc again. Do not commit.
+
+⏺ First I'll check whether anything still uses AnimatedIcon or the web variant.
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+⏺ AnimatedIcon is unused, so I'm removing it along with its keyframes, old logo
+  styles and gradient colours from animated-icon.tsx, keeping the splash
+  overlay, and adding the AGENTS.md rule.
+
+⏺ Write(src/components/animated-icon.tsx)
+  ⎿  Added 1 line, removed 80 lines
+       1  import { Image } from 'expo-image';
+       2  import * as SplashScreen from 'expo-splash-screen';
+       3  import { useState } from 'react';
+       4 -import { Dimensions, StyleSheet, View } from 'react-native';   
+       4 +import { StyleSheet, View } from 'react-native';               
+       5  import Animated, { Easing, Keyframe } from 'react-native-reanim
+          ated';
+       6  import { scheduleOnRN } from 'react-native-worklets';
+       7  
+       8  import { Colors } from '@/constants/theme';
+       9  
+      10 -const INITIAL_SCALE_FACTOR = Dimensions.get('screen').height / 
+         -90;                                                            
+      10  const DURATION = 600;
+      11  
+      12  export function AnimatedSplashOverlay() {
+     ...
+       60    );
+       61  }
+       62  
+       64 -const keyframe = new Keyframe({                               
+       65 -  0: {                                                        
+       66 -    transform: [{ scale: INITIAL_SCALE_FACTOR }],             
+       67 -  },                                                          
+       68 -  100: {                                                      
+       69 -    transform: [{ scale: 1 }],                                
+       70 -    easing: Easing.elastic(0.7),                              
+       71 -  },                                                          
+       72 -});                                                           
+       73 -                                                              
+       74 -const logoKeyframe = new Keyframe({                           
+       75 -  0: {                                                        
+       76 -    transform: [{ scale: 1.3 }],                              
+       77 -    opacity: 0,                                               
+       78 -  },                                                          
+       79 -  40: {                                                       
+       80 -    transform: [{ scale: 1.3 }],                              
+       81 -    opacity: 0,                                               
+       82 -    easing: Easing.elastic(0.7),                              
+       83 -  },                                                          
+       84 -  100: {                                                      
+       85 -    opacity: 1,                                               
+       86 -    transform: [{ scale: 1 }],                                
+       87 -    easing: Easing.elastic(0.7),                              
+       88 -  },                                                          
+       89 -});                                                           
+       90 -                                                              
+       91 -const glowKeyframe = new Keyframe({                           
+       92 -  0: {                                                        
+       93 -    transform: [{ rotateZ: '0deg' }],                         
+       94 -  },                                                          
+       95 -  100: {                                                      
+       96 -    transform: [{ rotateZ: '7200deg' }],                      
+       97 -  },                                                          
+       98 -});                                                           
+       99 -                                                              
+      100 -export function AnimatedIcon() {                              
+      101 -  return (                                                    
+      102 -    <View style={styles.iconContainer}>                       
+      103 -      <Animated.View entering={glowKeyframe.duration(60 * 1000
+          - * 4)} style={styles.glow}>                                   
+      104 -        <Image style={styles.glow} source={require('@/assets/i
+          -mages/logo-glow.png')} />                                     
+      105 -      </Animated.View>                                        
+      106 -                                                              
+      107 -      <Animated.View entering={keyframe.duration(DURATION)} st
+          -yle={styles.background} />                                    
+      108 -      <Animated.View style={styles.imageContainer} entering={l
+          -ogoKeyframe.duration(DURATION)}>                              
+      109 -        <Image style={styles.image} source={require('@/assets/
+          -images/expo-logo.png')} />                                    
+      110 -      </Animated.View>                                        
+      111 -    </View>                                                   
+      112 -  );                                                          
+      113 -}                                                             
+      114 -                                                              
+       63  const styles = StyleSheet.create({
+      116 -  imageContainer: {                                           
+      117 -    justifyContent: 'center',                                 
+      118 -    alignItems: 'center',                                     
+      119 -  },                                                          
+      120 -  glow: {                                                     
+      121 -    width: 201,                                               
+      122 -    height: 201,                                              
+      123 -    position: 'absolute',                                     
+      124 -  },                                                          
+      125 -  iconContainer: {                                            
+      126 -    justifyContent: 'center',                                 
+      127 -    alignItems: 'center',                                     
+      128 -    width: 128,                                               
+      129 -    height: 128,                                              
+      130 -    zIndex: 100,                                              
+      131 -  },                                                          
+      132 -  image: {                                                    
+      133 -    width: 76,                                                
+      134 -    height: 71,                                               
+      135 -  },                                                          
+       64    // pokemon-logo.png is 648 × 237 at 3x.
+       65    logo: {
+       66      width: 216,
+       67      height: 79,
+       68    },
+      141 -  background: {                                               
+      142 -    borderRadius: 40,                                         
+      143 -    experimental_backgroundImage: `linear-gradient(180deg, #3C
+          -9FFE, #0274DF)`,                                              
+      144 -    width: 128,                                               
+      145 -    height: 128,                                              
+      146 -    position: 'absolute',                                     
+      147 -  },                                                          
+       69    splashOverlay: {
+       70      ...StyleSheet.absoluteFill,
+       71      backgroundColor: Colors.daylight,
+
+⏺ Update(AGENTS.md)
+  ⎿  Added 1 line
+      38  - Every load has a loading state and an error state with a "Try
+           again" button that calls `refetch`.
+      39  - SQL always with `?` placeholders.
+      40  - `Pressable`, not `TouchableOpacity`. `FlatList` for lists.
+      41 +- Images shown where you cannot set a size (like tab bar icons)
+         + need the `@3x` suffix in the file name (`pokeball@3x.png`), or
+         + they show at 72 pt instead of 24.                             
+      42  - No `any`, no `as` casts (except `as const`), no `@ts-ignore`.
+           No `console.log`.
+      43  - Keep changes small. Do not refactor what the issue does not a
+          sk for.
+      44  
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ Lint and tsc are clean. The hex-code search failed because the shell expanded
+  the glob, so I'm rerunning it quoted.
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+⏺ Both review points are fixed, and npx expo lint and npx tsc --noEmit are
+  clean. Nothing is committed.
+
+  - animated-icon.tsx (src/components/animated-icon.tsx): AnimatedIcon wasn't
+    used anywhere, so I removed it. Its keyframes, the old Expo logo styles and
+    the #3C9FFE / #0274DF gradient went with it. Only the splash overlay is
+    left, with the Pokémon logo on daylight. A search finds no hex codes in
+    src/**/*.ts(x) outside theme.ts.
+  - AGENTS.md: I added a line under "Rules": images shown where you can't set a
+    size, like tab bar icons, need the @3x suffix in the file name
+    (pokeball@3x.png), or they show at 72 pt instead of 24.
+
+  The same unused AnimatedIcon, and the same gradient hex codes, also exist in
+  animated-icon.web.tsx (src/components/animated-icon.web.tsx) and
+  animated-icon.module.css (src/components/animated-icon.module.css). I left
+  those alone because you only named the native file and web is out of scope.
+  Should I clean them up too?
+
+❯ Yes, clean them up too: remove the unused AnimatedIcon and the gradient hex
+  codes from animated-icon.web.tsx and animated-icon.module.css. Keep whatever
+  the web file still needs to export so nothing breaks. Then lint and tsc
+  again. Do not commit.
+
+  Read 2 files (ctrl+o to expand)
+
+⏺ On web the file only needs to export a no-op AnimatedSplashOverlay, and its
+  CSS module holds just the one gradient class, so I'm deleting the file rather
+  than leaving it empty.
+
+⏺ Write(src/components/animated-icon.web.tsx)
+  ⎿  Added 1 line, removed 105 lines
+        1 -import { Image } from 'expo-image';                           
+        2 -import { StyleSheet, View } from 'react-native';              
+        3 -import Animated, { Keyframe, Easing } from 'react-native-reani
+          -mated';                                                       
+        4 -                                                              
+        5 -import classes from './animated-icon.module.css';             
+        6 -const DURATION = 300;                                         
+        7 -                                                              
+        1 +// Web has no splash overlay. This keeps the same export as `a
+          +nimated-icon.tsx`.                                            
+        2  export function AnimatedSplashOverlay() {
+        3    return null;
+        4  }
+       11 -                                                              
+       12 -const keyframe = new Keyframe({                               
+       13 -  0: {                                                        
+       14 -    transform: [{ scale: 0 }],                                
+       15 -  },                                                          
+       16 -  60: {                                                       
+       17 -    transform: [{ scale: 1.2 }],                              
+       18 -    easing: Easing.elastic(1.2),                              
+       19 -  },                                                          
+       20 -  100: {                                                      
+       21 -    transform: [{ scale: 1 }],                                
+       22 -    easing: Easing.elastic(1.2),                              
+       23 -  },                                                          
+       24 -});                                                           
+       25 -                                                              
+       26 -const logoKeyframe = new Keyframe({                           
+       27 -  0: {                                                        
+       28 -    opacity: 0,                                               
+       29 -  },                                                          
+       30 -  60: {                                                       
+       31 -    transform: [{ scale: 1.2 }],                              
+       32 -    opacity: 0,                                               
+       33 -    easing: Easing.elastic(1.2),                              
+       34 -  },                                                          
+       35 -  100: {                                                      
+       36 -    transform: [{ scale: 1 }],                                
+       37 -    opacity: 1,                                               
+       38 -    easing: Easing.elastic(1.2),                              
+       39 -  },                                                          
+       40 -});                                                           
+       41 -                                                              
+       42 -const glowKeyframe = new Keyframe({                           
+       43 -  0: {                                                        
+       44 -    transform: [{ rotateZ: '-180deg' }, { scale: 0.8 }],      
+       45 -    opacity: 0,                                               
+       46 -  },                                                          
+       47 -  [DURATION / 1000]: {                                        
+       48 -    transform: [{ rotateZ: '0deg' }, { scale: 1 }],           
+       49 -    opacity: 1,                                               
+       50 -    easing: Easing.elastic(0.7),                              
+       51 -  },                                                          
+       52 -  100: {                                                      
+       53 -    transform: [{ rotateZ: '7200deg' }],                      
+       54 -  },                                                          
+       55 -});                                                           
+       56 -                                                              
+       57 -export function AnimatedIcon() {                              
+       58 -  return (                                                    
+       59 -    <View style={styles.iconContainer}>                       
+       60 -      <Animated.View entering={glowKeyframe.duration(60 * 1000
+          - * 4)} style={styles.glow}>                                   
+       61 -        <Image style={styles.glow} source={require('@/assets/i
+          -mages/logo-glow.png')} />                                     
+       62 -      </Animated.View>                                        
+       63 -                                                              
+       64 -      <Animated.View style={styles.background} entering={keyfr
+          -ame.duration(DURATION)}>                                      
+       65 -        <div className={classes.expoLogoBackground} />        
+       66 -      </Animated.View>                                        
+       67 -                                                              
+       68 -      <Animated.View style={styles.imageContainer} entering={l
+          -ogoKeyframe.duration(DURATION)}>                              
+       69 -        <Image style={styles.image} source={require('@/assets/
+          -images/expo-logo.png')} />                                    
+       70 -      </Animated.View>                                        
+       71 -    </View>                                                   
+       72 -  );                                                          
+       73 -}                                                             
+       74 -                                                              
+       75 -const styles = StyleSheet.create({                            
+       76 -  container: {                                                
+       77 -    alignItems: 'center',                                     
+       78 -    width: '100%',                                            
+       79 -    zIndex: 1000,                                             
+       80 -    position: 'absolute',                                     
+       81 -    top: 128 / 2 + 138,                                       
+       82 -  },                                                          
+       83 -  imageContainer: {                                           
+       84 -    justifyContent: 'center',                                 
+       85 -    alignItems: 'center',                                     
+       86 -  },                                                          
+       87 -  glow: {                                                     
+       88 -    width: 201,                                               
+       89 -    height: 201,                                              
+       90 -    position: 'absolute',                                     
+       91 -  },                                                          
+       92 -  iconContainer: {                                            
+       93 -    justifyContent: 'center',                                 
+       94 -    alignItems: 'center',                                     
+       95 -    width: 128,                                               
+       96 -    height: 128,                                              
+       97 -  },                                                          
+       98 -  image: {                                                    
+       99 -    position: 'absolute',                                     
+      100 -    width: 76,                                                
+      101 -    height: 71,                                               
+      102 -  },                                                          
+      103 -  background: {                                               
+      104 -    width: 128,                                               
+      105 -    height: 128,                                              
+      106 -    position: 'absolute',                                     
+      107 -  },                                                          
+      108 -});                                                           
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ The web cleanup is done, and npx expo lint and npx tsc --noEmit are clean.
+  Nothing is committed.
+
+  - animated-icon.web.tsx (src/components/animated-icon.web.tsx): I removed
+    AnimatedIcon, its keyframes and styles. It now only exports
+    AnimatedSplashOverlay, which returns null like before, so the import in
+    _layout.tsx still works on web.
+  - animated-icon.module.css: I deleted it. Its only rule was the gradient that
+    AnimatedIcon used, so removing the hex codes would have left an empty file.
+    Nothing else imports it.
+
+  There are now no hex codes in src outside theme.ts, CSS included.
+
+  git status shows the earlier work already staged, which I didn't do. The
+  changes from this round are not staged yet: AGENTS.md, both animated-icon
+  files and the deleted CSS file. Stage them with the rest before you commit.
