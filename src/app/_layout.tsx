@@ -1,11 +1,13 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
-import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { DefaultTheme, router, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
+import { HeaderButton } from '@/components/header-button';
 import { Colors, Fonts } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -25,10 +27,21 @@ export default function RootLayout() {
     [Fonts.bold]: require('@/assets/fonts/Rubik-Bold.ttf'),
   });
 
+  const theme = useTheme();
+
   // Keep the splash screen up until Rubik is ready. On a font error, go on with the system font.
   if (!fontsLoaded && !fontError) {
     return null;
   }
+
+  const backButton = (
+    <HeaderButton
+      icon={require('@/assets/icons/back.png')}
+      label="Vorige"
+      accessibilityLabel="Vorige"
+      onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+    />
+  );
 
   return (
     <ThemeProvider value={navigationTheme}>
@@ -37,7 +50,20 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="pokemon/[id]" options={{ title: '' }} />
+          <Stack.Screen
+            name="pokemon/[id]"
+            options={{
+              title: '',
+              headerStyle: { backgroundColor: theme.daylight },
+              headerShadowVisible: false,
+              // Android and older iOS.
+              headerLeft: () => backButton,
+              // iOS 26: the same button, without the Liquid Glass pill behind it.
+              unstable_headerLeftItems: () => [
+                { type: 'custom', element: backButton, hidesSharedBackground: true },
+              ],
+            }}
+          />
         </Stack>
       </QueryClientProvider>
     </ThemeProvider>

@@ -30,6 +30,11 @@ Reuse what is listed here, never add a second one. When you set up something new
 - Pokémon card (badge, sprite, name, ⋮): `src/components/pokemon-card.tsx`.
 - All Pokémon names and ids (list and search): `usePokemonList()` in `src/hooks/use-pokemon-list.ts`. Sprite URL: `getSpriteUrl(id)` in `src/services/pokeapi.ts`.
 - Name, number and id-from-url formatting: `src/utils/pokemon.ts`.
+- `staleTime` for PokeAPI queries: `ONE_HOUR` in `src/constants/query.ts`.
+- One Pokémon from `/pokemon/{id}` (types, stats, height, weight, abilities, species id): `usePokemon(id)` in `src/hooks/use-pokemon.ts`. Official artwork URL: `getArtworkUrl(id)` in `src/services/pokeapi.ts`.
+- Number badge (`001`): `src/components/number-badge.tsx`. Type chip (dot + name): `src/components/type-chip.tsx`, colour from `getTypeColor(type)` in `src/constants/theme.ts`.
+- Header button (icon, optional label): `src/components/header-button.tsx`. On iOS 26, pass it through `unstable_headerLeftItems` / `unstable_headerRightItems` with `hidesSharedBackground: true` to hide the glass pill, and through `headerLeft` / `headerRight` for Android.
+- Stat name and bar length (relative to 255): `formatStatName` and `getStatRatio` in `src/utils/pokemon.ts`.
 
 ## Rules
 
@@ -37,7 +42,7 @@ Reuse what is listed here, never add a second one. When you set up something new
 - `isPending` for the first spinner, not `isLoading`. Check `data` before `error`.
 - Every load has a loading state and an error state with a "Try again" button that calls `refetch`.
 - SQL always with `?` placeholders.
-- `Pressable`, not `TouchableOpacity`. `FlatList` for lists.
+- `Pressable`, not `TouchableOpacity`. `FlatList` for long lists. Short fixed lists inside a scroll view (stats, an evolution chain) can use `map`.
 - Images shown where you cannot set a size (like tab bar icons) need the `@3x` suffix in the file name (`pokeball@3x.png`), or they show at 72 pt instead of 24.
 - No `any`, no `as` casts (except `as const`), no `@ts-ignore`. No `console.log`.
 - Keep changes small. Do not refactor what the issue does not ask for.

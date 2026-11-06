@@ -1,9 +1,10 @@
 import { Image } from 'expo-image';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { NumberBadge } from '@/components/number-badge';
 import { Fonts, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { formatName, formatNumber } from '@/utils/pokemon';
+import { formatName } from '@/utils/pokemon';
 
 type Props = {
   id: number;
@@ -35,9 +36,7 @@ export function PokemonCard({ id, name, spriteUrl, width, onPress, onMorePress }
       <View style={[styles.imageArea, { width, height: width, backgroundColor: theme.cardImage }]}>
         {/* No placeholder: a missing sprite leaves the image area empty. */}
         <Image source={spriteUrl} recyclingKey={String(id)} contentFit="contain" style={styles.sprite} />
-        <View style={[styles.badge, { backgroundColor: theme.purple }]}>
-          <Text style={[styles.badgeText, { color: theme.white }]}>{formatNumber(id)}</Text>
-        </View>
+        <NumberBadge id={id} />
       </View>
       <View style={styles.nameRow}>
         <Text numberOfLines={1} style={[styles.name, { color: theme.midnight }]}>
@@ -64,15 +63,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   sprite: { width: '100%', height: '100%' },
-  badge: {
-    position: 'absolute',
-    top: Spacing.two,
-    left: Spacing.two,
-    paddingHorizontal: 6,
-    paddingVertical: Spacing.half,
-    borderRadius: Radius.xs,
-  },
-  badgeText: { fontFamily: Fonts.semiBold, fontSize: 12 },
   nameRow: {
     flexDirection: 'row',
     alignItems: 'center',

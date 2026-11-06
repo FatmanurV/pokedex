@@ -8,7 +8,7 @@ its stats and how it evolves.
 ## Constraints
 
 - Screen `src/app/pokemon/[id].tsx`, pushed on the root stack. Header: back button "Vorige" left (back icon), nothing in the middle, heart right.
-- Data: `/pokemon/{id}` for everything on screen, `/pokemon-species/{id}` only for the evolution chain url, then `/evolution-chain/{id}`. One hook per endpoint, query key with the id. `staleTime` one hour.
+- Data: `/pokemon/{id}` for everything on screen, then `/pokemon-species/{speciesId}` only for the evolution chain url, then `/evolution-chain/{id}`. The species id comes from `species.url` in the `/pokemon` response, because forms (ids 10001 and up) have no species with their own id. One hook per endpoint, query key with the id. `staleTime` one hour.
 - Layout as in the design: name (32, bold) and `#001` (faint) on one line, type chips, official artwork. Top part on `daylight`, the lower part white. The whole screen scrolls, the header stays on top.
 - The tabs are component state (`useState`) in the screen. Each tab is its own component in `src/components/`.
 - The heart is shown, its action comes with the feature "Favorites".

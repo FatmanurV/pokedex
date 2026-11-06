@@ -34,3 +34,48 @@ export function filterByName<T extends { name: string }>(items: T[], query: stri
 export function formatNumber(id: number): string {
   return String(id).padStart(3, '0');
 }
+
+/** Hectograms → `6.9 kg`. */
+export function formatWeight(hectograms: number): string {
+  return `${hectograms / 10} kg`;
+}
+
+/** Decimetres → `0.7 m`. */
+export function formatHeight(decimetres: number): string {
+  return `${decimetres / 10} m`;
+}
+
+/** `64` → `64 XP`. Some forms have no base experience: `–`. */
+export function formatBaseExperience(baseExperience: number | null): string {
+  return baseExperience === null ? '–' : `${baseExperience} XP`;
+}
+
+/** `hp` → `HP`, `special-attack` → `Special Attack`. */
+export function formatStatName(name: string): string {
+  return name === 'hp' ? 'HP' : formatName(name);
+}
+
+/** The highest base stat any Pokémon has. */
+const MAX_BASE_STAT = 255;
+
+/** How full a stat bar is, from 0 to 1. */
+export function getStatRatio(value: number): number {
+  return Math.min(Math.max(value / MAX_BASE_STAT, 0), 1);
+}
+
+/** The shape of a step in `/evolution-chain/{id}`. */
+type EvolutionStep = {
+  species: { name: string; url: string };
+  evolves_to: EvolutionStep[];
+};
+
+/**
+ * The whole chain as one list, top to bottom. Branches follow each other:
+ * Oddish → Gloom → Vileplume, Bellossom gives Oddish, Gloom, Vileplume, Bellossom.
+ */
+export function flattenEvolutionChain(step: EvolutionStep): { id: number; name: string }[] {
+  return [
+    { id: getIdFromUrl(step.species.url), name: step.species.name },
+    ...step.evolves_to.flatMap(flattenEvolutionChain),
+  ];
+}

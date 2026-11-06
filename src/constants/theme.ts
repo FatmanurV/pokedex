@@ -48,6 +48,15 @@ export const TypeColors = {
   unknown: '#B6B6B6',
 } as const;
 
+function isTypeName(type: string): type is keyof typeof TypeColors {
+  return type in TypeColors;
+}
+
+/** Colour of the dot in a type chip. Types we don't know get the `unknown` colour. */
+export function getTypeColor(type: string): string {
+  return isTypeName(type) ? TypeColors[type] : TypeColors.unknown;
+}
+
 /** Rubik, loaded with `useFonts` in `src/app/_layout.tsx`. The names are the keys used there. */
 export const Fonts = {
   regular: 'Rubik-Regular',
@@ -69,4 +78,4 @@ export const Spacing = {
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 800;
 
-export const Radius = { xs: 4, s: 8, m: 12, l: 16 } as const;
+export const Radius = { xs: 4, s: 8, m: 12, l: 16, pill: 999 } as const;
