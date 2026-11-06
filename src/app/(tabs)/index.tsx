@@ -1,26 +1,22 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ErrorView } from '@/components/error-view';
-import { PokemonCard } from '@/components/pokemon-card';
+import { PokemonGrid } from '@/components/pokemon-grid';
 import { SearchField } from '@/components/search-field';
 import { Fonts, Spacing } from '@/constants/theme';
 import { usePokemonList } from '@/hooks/use-pokemon-list';
 import { useTheme } from '@/hooks/use-theme';
-import { getSpriteUrl } from '@/services/pokeapi';
 import { filterByName } from '@/utils/pokemon';
 
 const SIDE_PADDING = Spacing.four;
-const GAP = Spacing.three;
 
 export default function HomeScreen() {
   const theme = useTheme();
-  const { width } = useWindowDimensions();
   const { data, error, isPending, refetch } = usePokemonList();
   const [query, setQuery] = useState('');
-  const cardWidth = (width - SIDE_PADDING * 2 - GAP) / 2;
 
   let content;
   if (isPending) {
@@ -31,27 +27,12 @@ export default function HomeScreen() {
     );
   } else if (data) {
     content = (
-      <FlatList
-        data={filterByName(data, query)}
-        numColumns={2}
-        keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => (
-          <PokemonCard
-            id={item.id}
-            name={item.name}
-            spriteUrl={getSpriteUrl(item.id)}
-            width={cardWidth}
-            onPress={() => router.push({ pathname: '/pokemon/[id]', params: { id: item.id } })}
-          />
-        )}
+      <PokemonGrid
+        pokemon={filterByName(data, query)}
+        onPressPokemon={(id) => router.push({ pathname: '/pokemon/[id]', params: { id } })}
         ListEmptyComponent={
           <Text style={[styles.empty, { color: theme.textMuted }]}>No Pokémon found</Text>
         }
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={styles.list}
-        initialNumToRender={8}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag"
       />
     );
   } else {
@@ -79,7 +60,5 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.three,
   },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  list: { paddingHorizontal: SIDE_PADDING, paddingBottom: Spacing.four, gap: GAP },
-  row: { gap: GAP },
   empty: { fontFamily: Fonts.regular, fontSize: 16, textAlign: 'center', paddingTop: Spacing.five },
 });

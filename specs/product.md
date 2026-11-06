@@ -71,7 +71,7 @@ Look up a Pokémon.
 - [ ] Tests: one per feature on the logic, `npm test` passes
 - [ ] CI: lint and tsc on every push
 - [ ] Accessibility: button labels, largest text size
-- [ ] Optimistic update
+- [x] Optimistic update
 
 ## Out of scope
 

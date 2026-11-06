@@ -26,6 +26,16 @@ export default function AppTabs() {
           renderingMode="template"
         />
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="favorites">
+        <NativeTabs.Trigger.Label>Favorites</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          src={{
+            default: require('@/assets/icons/heart.png'),
+            selected: require('@/assets/icons/heart-filled.png'),
+          }}
+          renderingMode="template"
+        />
+      </NativeTabs.Trigger>
     </NativeTabs>
   );
 }

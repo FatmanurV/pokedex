@@ -6,7 +6,7 @@ Keep the Pokémon I like on their own tab, also after I close the app.
 
 ## Constraints
 
-- SQLite with `expo-sqlite`, table `favorites`: `id INTEGER PRIMARY KEY`, `name TEXT NOT NULL`, `created_at TEXT DEFAULT CURRENT_TIMESTAMP`.
+- SQLite with `expo-sqlite`, table `favorites`: `id INTEGER PRIMARY KEY`, `name TEXT NOT NULL`, `created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))` (milliseconds, so newest first is exact).
 - All SQL in `src/services/favorites-db.ts`, `?` placeholders. Screens use hooks from `src/hooks/use-favorites.ts`: a query for the list, a query for "is this one a favorite", a mutation to toggle that invalidates `['favorites']`.
 - New tab `src/app/(tabs)/favorites.tsx`, title "My favorites", tab bar item "Favorites" with the heart icon. The active tab bar item is purple with the filled icon.
 - Reuses the card and the grid from the list.

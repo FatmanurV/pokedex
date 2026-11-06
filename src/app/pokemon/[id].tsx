@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AboutTab } from '@/components/about-tab';
@@ -13,6 +13,7 @@ import { StatsTab } from '@/components/stats-tab';
 import { TypeChip } from '@/components/type-chip';
 import { Fonts, Spacing } from '@/constants/theme';
 import { useEvolutionChain } from '@/hooks/use-evolution-chain';
+import { useIsFavorite, useToggleFavorite } from '@/hooks/use-favorites';
 import { usePokemon } from '@/hooks/use-pokemon';
 import { usePokemonSpecies } from '@/hooks/use-pokemon-species';
 import { useTheme } from '@/hooks/use-theme';
@@ -34,8 +35,32 @@ export default function PokemonDetailScreen() {
   const species = usePokemonSpecies(pokemon.data?.speciesId);
   const evolutionChain = useEvolutionChain(species.data?.evolutionChainId);
 
-  // The heart is only shown for now. Its action comes with the feature "Favorites".
-  const heartButton = <HeaderButton icon={require('@/assets/icons/heart.png')} accessibilityLabel="Favorite" />;
+  const isFavorite = useIsFavorite(pokemonId);
+  const toggleFavorite = useToggleFavorite();
+  const favorite = isFavorite.data === true;
+
+  function onHeartPress() {
+    // The state could not be read: tapping tries again, the heart stays empty.
+    if (isFavorite.isError && isFavorite.data === undefined) {
+      isFavorite.refetch();
+      return;
+    }
+    // Wait for the name and the current state, and ignore taps while a toggle is running.
+    if (!pokemon.data || isFavorite.data === undefined || toggleFavorite.isPending) return;
+    toggleFavorite.mutate(
+      { id: pokemonId, name: pokemon.data.name, isFavorite: isFavorite.data },
+      { onError: (error) => Alert.alert('Could not save favorite', error.message) },
+    );
+  }
+
+  const heartButton = (
+    <HeaderButton
+      icon={favorite ? require('@/assets/icons/heart-filled.png') : require('@/assets/icons/heart.png')}
+      tintColor={favorite ? theme.red : theme.midnight}
+      accessibilityLabel={favorite ? 'Remove from favorites' : 'Add to favorites'}
+      onPress={onHeartPress}
+    />
+  );
   const header = (
     <Stack.Screen
       options={{

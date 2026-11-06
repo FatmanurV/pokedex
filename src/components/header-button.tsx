@@ -10,10 +10,12 @@ type Props = {
   label?: string;
   accessibilityLabel: string;
   onPress?: () => void;
+  /** Icon colour from the theme. Defaults to `midnight`. */
+  tintColor?: string;
 };
 
 /** Icon (and optional label) button for the stack header. */
-export function HeaderButton({ icon, label, accessibilityLabel, onPress }: Props) {
+export function HeaderButton({ icon, label, accessibilityLabel, onPress, tintColor }: Props) {
   const theme = useTheme();
 
   return (
@@ -23,7 +25,7 @@ export function HeaderButton({ icon, label, accessibilityLabel, onPress }: Props
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       style={styles.button}>
-      <Image source={icon} tintColor={theme.midnight} style={styles.icon} />
+      <Image source={icon} tintColor={tintColor ?? theme.midnight} style={styles.icon} />
       {label && <Text style={[styles.label, { color: theme.midnight }]}>{label}</Text>}
     </Pressable>
   );
