@@ -82,6 +82,27 @@ export function getStatRatio(value: number): number {
   return Math.min(Math.max(value / MAX_BASE_STAT, 0), 1);
 }
 
+export type StatWinner = 'first' | 'second' | 'tie';
+
+/** Which of two stat values is higher. Equal values are a tie. */
+export function getStatWinner(first: number, second: number): StatWinner {
+  if (first > second) return 'first';
+  if (second > first) return 'second';
+  return 'tie';
+}
+
+/** The sum of all stat values. */
+export function getStatTotal(stats: { value: number }[]): number {
+  return stats.reduce((sum, stat) => sum + stat.value, 0);
+}
+
+/** A route param as a Pokémon id: `'25'` → 25. Missing, empty, a list, or not a positive whole number → `undefined`. */
+export function parsePokemonId(param: string | string[] | undefined): number | undefined {
+  if (typeof param !== 'string' || !/^\d+$/.test(param)) return undefined;
+  const id = Number(param);
+  return id > 0 ? id : undefined;
+}
+
 /** The shape of a step in `/evolution-chain/{id}`. */
 type EvolutionStep = {
   species: { name: string; url: string };

@@ -12,7 +12,7 @@ type Props = {
   spriteUrl: string;
   width: number;
   onPress: () => void;
-  /** The ⋮ icon: opens the options menu. */
+  /** The ⋮ icon: opens the options menu. Without it there is no ⋮. */
   onMorePress?: () => void;
 };
 
@@ -42,13 +42,15 @@ export function PokemonCard({ id, name, spriteUrl, width, onPress, onMorePress }
         <Text numberOfLines={1} style={[styles.name, { color: theme.midnight }]}>
           {displayName}
         </Text>
-        <Pressable
-          onPress={onMorePress}
-          hitSlop={Spacing.two}
-          accessibilityRole="button"
-          accessibilityLabel={`Options for ${displayName}`}>
-          <Image source={require('@/assets/icons/more.png')} tintColor={theme.midnight} style={styles.icon} />
-        </Pressable>
+        {onMorePress && (
+          <Pressable
+            onPress={onMorePress}
+            hitSlop={Spacing.two}
+            accessibilityRole="button"
+            accessibilityLabel={`Options for ${displayName}`}>
+            <Image source={require('@/assets/icons/more.png')} tintColor={theme.midnight} style={styles.icon} />
+          </Pressable>
+        )}
       </View>
     </Pressable>
   );

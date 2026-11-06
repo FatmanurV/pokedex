@@ -1,0 +1,1445 @@
+
+❯ Read specs/product.md, specs/design.md and specs/features/compare.md. Do not
+  build anything. Ask me the questions you would need answered before you could
+  build this feature without guessing. One question at a time, wait for my
+  answer. Every answer goes into specs/features/compare.md.
+
+  Read 3 files, listed 1 directory (ctrl+o to expand)
+
+⏺ I've reviewed all three specs, the options-menu and search specs, and the
+  current code: compare.tsx is still a placeholder, and the options menu already
+  links to /compare?first=<id>. I'll ask you one question at a time and record
+  each answer in specs/features/compare.md.
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 1: how should each stat row look? The spec says both
+     values show and the higher one is bold and purple, but not how the row is
+     laid out. The detail screen's Stats tab uses a name, a value and a bar
+     (purple on the track). → Values with mirrored bars
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line
+      17  
+      18  - [ ] At the top both Pokémon with artwork, name, number and ty
+          pe chips. Until the second one is picked, its side says "Pick a
+           Pokémon" and the search shows below.
+      19  - [ ] Per stat (HP, Attack, Defense, Special Attack, Special De
+          fense, Speed) both values; the higher one is bold and purple. A
+           tie highlights neither.
+      20 +- [ ] Each stat row has the stat name in the middle and a bar o
+         +n each side that grows outward from the centre (first Pokémon t
+         +o the left, second to the right), with the value at the outer e
+         +nd of its bar.                                                 
+      21  - [ ] A row "Total" with the sum of the six stats, highlighted 
+          the same way.
+      22  - [ ] A "Change" button lets me pick another second Pokémon.
+      23  - [ ] Loading and error state (with "Try again") for each Pokém
+          on.
+
+⏺ I added it to the spec. Mirrored bars bring up a follow-up about how long they
+  are:
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 2: what decides how long a mirrored bar is? On the
+     detail screen a bar is value / 255 (getStatRatio). → Value / 255
+     (Recommended)
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line, removed 1 line
+      17  
+      18  - [ ] At the top both Pokémon with artwork, name, number and ty
+          pe chips. Until the second one is picked, its side says "Pick a
+           Pokémon" and the search shows below.
+      19  - [ ] Per stat (HP, Attack, Defense, Special Attack, Special De
+          fense, Speed) both values; the higher one is bold and purple. A
+           tie highlights neither.
+      20 -- [ ] Each stat row has the stat name in the middle and a bar o
+         -n each side that grows outward from the centre (first Pokémon t
+         -o the left, second to the right), with the value at the outer e
+         -nd of its bar.                                                 
+      20 +- [ ] Each stat row has the stat name in the middle and a bar o
+         +n each side that grows outward from the centre (first Pokémon t
+         +o the left, second to the right), with the value at the outer e
+         +nd of its bar. Bar length is value / 255, the same `getStatRati
+         +o` as the detail screen.                                       
+      21  - [ ] A row "Total" with the sum of the six stats, highlighted 
+          the same way.
+      22  - [ ] A "Change" button lets me pick another second Pokémon.
+      23  - [ ] Loading and error state (with "Try again") for each Pokém
+          on.
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 3: what colour are the mirrored bars? The spec makes
+     the higher value bold and purple. On the detail screen every bar is purple
+     on the light `track`. → Winner purple, other muted
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line, removed 1 line
+      17  
+      18  - [ ] At the top both Pokémon with artwork, name, number and ty
+          pe chips. Until the second one is picked, its side says "Pick a
+           Pokémon" and the search shows below.
+      19  - [ ] Per stat (HP, Attack, Defense, Special Attack, Special De
+          fense, Speed) both values; the higher one is bold and purple. A
+           tie highlights neither.
+      20 -- [ ] Each stat row has the stat name in the middle and a bar o
+         -n each side that grows outward from the centre (first Pokémon t
+         -o the left, second to the right), with the value at the outer e
+         -nd of its bar. Bar length is value / 255, the same `getStatRati
+         -o` as the detail screen.                                       
+      20 +- [ ] Each stat row has the stat name in the middle and a bar o
+         +n each side that grows outward from the centre (first Pokémon t
+         +o the left, second to the right), with the value at the outer e
+         +nd of its bar. Bar length is value / 255, the same `getStatRati
+         +o` as the detail screen. Bars sit on the `track` colour. The hi
+         +gher side's bar is purple and the lower side's bar is muted; in
+         + a tie both bars are muted.                                    
+      21  - [ ] A row "Total" with the sum of the six stats, highlighted 
+          the same way.
+      22  - [ ] A "Change" button lets me pick another second Pokémon.
+      23  - [ ] Loading and error state (with "Try again") for each Pokém
+          on.
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 4: which colour is the muted bar? It sits on `track`
+     (midnight at 5%), so it needs to be darker than that. → New token, midnight
+     20%
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line
+      12  - Stats from `/pokemon/{id}`: the same hook and cache as the de
+          tail screen.
+      13  - Who wins per stat is a plain function in `src/utils/`, withou
+          t React.
+      14  - Colours, font and chips as on the detail screen.
+      15 +- One new colour token, `barMuted`: `#0E0940` at 20%, for the l
+         +ower side's stat bar. It goes into `src/constants/theme.ts` and
+         + gets a row in the colour table in `specs/design.md`.          
+      16  
+      17  ## Acceptance Criteria
+      18  
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 5: does the "Total" row get mirrored bars too? It can't
+     use value / 255, since totals run up to about 720 (max possible 1530). →
+     No bars, values only (Recommended)
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line, removed 1 line
+      19  - [ ] At the top both Pokémon with artwork, name, number and ty
+          pe chips. Until the second one is picked, its side says "Pick a
+           Pokémon" and the search shows below.
+      20  - [ ] Per stat (HP, Attack, Defense, Special Attack, Special De
+          fense, Speed) both values; the higher one is bold and purple. A
+           tie highlights neither.
+      21  - [ ] Each stat row has the stat name in the middle and a bar o
+          n each side that grows outward from the centre (first Pokémon t
+          o the left, second to the right), with the value at the outer e
+          nd of its bar. Bar length is value / 255, the same `getStatRati
+          o` as the detail screen. Bars sit on the `track` colour. The hi
+          gher side's bar is purple and the lower side's bar is muted; in
+           a tie both bars are muted.
+      22 -- [ ] A row "Total" with the sum of the six stats, highlighted 
+         -the same way.                                                  
+      22 +- [ ] A row "Total" with the sum of the six stats, highlighted 
+         +the same way. It sits below a `divider` line, with "Total" in t
+         +he middle and the two sums on the sides, and has no bars.      
+      23  - [ ] A "Change" button lets me pick another second Pokémon.
+      24  - [ ] Loading and error state (with "Try again") for each Pokém
+          on.
+      25  
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 6: how should the stat name fit in the middle? The
+     screen is 342 wide inside its padding. "Special Defense" at 16 SemiBold
+     needs about 140 (that's the label width on the detail Stats tab), which
+     leaves only about 55 per bar after the values. → Full name above the bars
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line, removed 1 line
+      18  
+      19  - [ ] At the top both Pokémon with artwork, name, number and ty
+          pe chips. Until the second one is picked, its side says "Pick a
+           Pokémon" and the search shows below.
+      20  - [ ] Per stat (HP, Attack, Defense, Special Attack, Special De
+          fense, Speed) both values; the higher one is bold and purple. A
+           tie highlights neither.
+      21 -- [ ] Each stat row has the stat name in the middle and a bar o
+         -n each side that grows outward from the centre (first Pokémon t
+         -o the left, second to the right), with the value at the outer e
+         -nd of its bar. Bar length is value / 255, the same `getStatRati
+         -o` as the detail screen. Bars sit on the `track` colour. The hi
+         -gher side's bar is purple and the lower side's bar is muted; in
+         - a tie both bars are muted.                                    
+      21 +- [ ] Each stat row has the full stat name (`formatStatName`) c
+         +entred on its own line. Below it, one bar per side starts at th
+         +e centre of the screen and grows outward (first Pokémon to the 
+         +left, second to the right), with the value at the outer end of 
+         +its bar. Bar length is value / 255, the same `getStatRatio` as 
+         +the detail screen. Bars sit on the `track` colour. The higher s
+         +ide's bar is purple and the lower side's bar is muted; in a tie
+         + both bars are muted.                                          
+      22  - [ ] A row "Total" with the sum of the six stats, highlighted 
+          the same way. It sits below a `divider` line, with "Total" in t
+          he middle and the two sums on the sides, and has no bars.
+      23  - [ ] A "Change" button lets me pick another second Pokémon.
+      24  - [ ] Loading and error state (with "Try again") for each Pokém
+          on.
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 7: in the picker below "Pick a Pokémon", what do the
+     search cards do? In the list and search, tapping a card opens its detail
+     and the ⋮ opens the options menu. → Tap picks, no ⋮
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line
+       9  
+      10  - Screen `src/app/compare.tsx`, opened with "Compare" in the op
+          tions menu: that Pokémon is the first one (`/compare?first=25`)
+          . Header with "Vorige", as on the detail screen.
+      11  - The second one is picked on the same screen with the search f
+          ield and cards from the search feature (same filter function, s
+          ame list query).
+      12 +- In the picker, tapping a card makes it the second Pokémon (it
+         + does not open the detail). The cards have no ⋮ there, so there
+         + is no options menu on the compare screen. `PokemonCard` gets a
+         +n optional prop to hide the ⋮.                                 
+      13  - Stats from `/pokemon/{id}`: the same hook and cache as the de
+          tail screen.
+      14  - Who wins per stat is a plain function in `src/utils/`, withou
+          t React.
+      15  - Colours, font and chips as on the detail screen.
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 8: what does the picker show before I type anything? →
+     Full list (Recommended)
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line
+      10  - Screen `src/app/compare.tsx`, opened with "Compare" in the op
+          tions menu: that Pokémon is the first one (`/compare?first=25`)
+          . Header with "Vorige", as on the detail screen.
+      11  - The second one is picked on the same screen with the search f
+          ield and cards from the search feature (same filter function, s
+          ame list query).
+      12  - In the picker, tapping a card makes it the second Pokémon (it
+           does not open the detail). The cards have no ⋮ there, so there
+           is no options menu on the compare screen. `PokemonCard` gets a
+          n optional prop to hide the ⋮.
+      13 +- With an empty search field the picker shows the full list in 
+         +the two-column grid, as on the home screen. Typing filters it, 
+         +and no match shows "No Pokémon found".                         
+      14  - Stats from `/pokemon/{id}`: the same hook and cache as the de
+          tail screen.
+      15  - Who wins per stat is a plain function in `src/utils/`, withou
+          t React.
+      16  - Colours, font and chips as on the detail screen.
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 9: can the second Pokémon be the same as the first
+     (Pikachu vs Pikachu)? → Hide it from the picker
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line
+      11  - The second one is picked on the same screen with the search f
+          ield and cards from the search feature (same filter function, s
+          ame list query).
+      12  - In the picker, tapping a card makes it the second Pokémon (it
+           does not open the detail). The cards have no ⋮ there, so there
+           is no options menu on the compare screen. `PokemonCard` gets a
+          n optional prop to hide the ⋮.
+      13  - With an empty search field the picker shows the full list in 
+          the two-column grid, as on the home screen. Typing filters it, 
+          and no match shows "No Pokémon found".
+      14 +- The first Pokémon is left out of the picker list, so it canno
+         +t be picked as the second one.                                 
+      15  - Stats from `/pokemon/{id}`: the same hook and cache as the de
+          tail screen.
+      16  - Who wins per stat is a plain function in `src/utils/`, withou
+          t React.
+      17  - Colours, font and chips as on the detail screen.
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 10: where is the second Pokémon kept once it's picked?
+     This changes what "Vorige" does. → URL param, replaced (Recommended)
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line
+      12  - In the picker, tapping a card makes it the second Pokémon (it
+           does not open the detail). The cards have no ⋮ there, so there
+           is no options menu on the compare screen. `PokemonCard` gets a
+          n optional prop to hide the ⋮.
+      13  - With an empty search field the picker shows the full list in 
+          the two-column grid, as on the home screen. Typing filters it, 
+          and no match shows "No Pokémon found".
+      14  - The first Pokémon is left out of the picker list, so it canno
+          t be picked as the second one.
+      15 +- The second one lives in the URL: picking sets `second` on the
+         + same screen with `router.setParams` (`/compare?first=25&second
+         +=4`), so nothing is pushed. "Vorige" always goes back to where 
+         +Compare was opened from.                                       
+      16  - Stats from `/pokemon/{id}`: the same hook and cache as the de
+          tail screen.
+      17  - Who wins per stat is a plain function in `src/utils/`, withou
+          t React.
+      18  - Colours, font and chips as on the detail screen.
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 11: where is the "Change" button, and what does it do?
+     → Under the second's chips
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line, removed 1 line
+      24  - [ ] Per stat (HP, Attack, Defense, Special Attack, Special De
+          fense, Speed) both values; the higher one is bold and purple. A
+           tie highlights neither.
+      25  - [ ] Each stat row has the full stat name (`formatStatName`) c
+          entred on its own line. Below it, one bar per side starts at th
+          e centre of the screen and grows outward (first Pokémon to the 
+          left, second to the right), with the value at the outer end of 
+          its bar. Bar length is value / 255, the same `getStatRatio` as 
+          the detail screen. Bars sit on the `track` colour. The higher s
+          ide's bar is purple and the lower side's bar is muted; in a tie
+           both bars are muted.
+      26  - [ ] A row "Total" with the sum of the six stats, highlighted 
+          the same way. It sits below a `divider` line, with "Total" in t
+          he middle and the two sums on the sides, and has no bars.
+      27 -- [ ] A "Change" button lets me pick another second Pokémon.   
+      27 +- [ ] A "Change" button lets me pick another second Pokémon. It
+         + is a small text button below the second Pokémon's type chips. 
+         +Tapping it clears `second`, so that side shows "Pick a Pokémon"
+         + again and the picker takes the place of the stats.            
+      28  - [ ] Loading and error state (with "Try again") for each Pokém
+          on.
+      29  
+      30  ## Out of Scope
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 12: how is each half of the top laid out? Each half is
+     about 163 wide, so the detail screen's 32 Bold name with #025 won't fit
+     ("Crabominable" alone is wider). → Artwork, name, chips
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line
+      21  ## Acceptance Criteria
+      22  
+      23  - [ ] At the top both Pokémon with artwork, name, number and ty
+          pe chips. Until the second one is picked, its side says "Pick a
+           Pokémon" and the search shows below.
+      24 +- [ ] Each half of the top (first left, second right) is centre
+         +d: square artwork, half the width, on `daylight`. Below it the 
+         +name in 18 SemiBold, ending in `..` when it is too long, with `
+         +#025` next to it in `textFaint`. Then the type chips.          
+      25  - [ ] Per stat (HP, Attack, Defense, Special Attack, Special De
+          fense, Speed) both values; the higher one is bold and purple. A
+           tie highlights neither.
+      26  - [ ] Each stat row has the full stat name (`formatStatName`) c
+          entred on its own line. Below it, one bar per side starts at th
+          e centre of the screen and grows outward (first Pokémon to the 
+          left, second to the right), with the value at the outer end of 
+          its bar. Bar length is value / 255, the same `getStatRatio` as 
+          the detail screen. Bars sit on the `track` colour. The higher s
+          ide's bar is purple and the lower side's bar is muted; in a tie
+           both bars are muted.
+      27  - [ ] A row "Total" with the sum of the six stats, highlighted 
+          the same way. It sits below a `divider` line, with "Total" in t
+          he middle and the two sums on the sides, and has no bars.
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 13: what does the empty right half look like before the
+     second Pokémon is picked? → Pokéball placeholder
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line
+      22  
+      23  - [ ] At the top both Pokémon with artwork, name, number and ty
+          pe chips. Until the second one is picked, its side says "Pick a
+           Pokémon" and the search shows below.
+      24  - [ ] Each half of the top (first left, second right) is centre
+          d: square artwork, half the width, on `daylight`. Below it the 
+          name in 18 SemiBold, ending in `..` when it is too long, with `
+          #025` next to it in `textFaint`. Then the type chips.
+      25 +- [ ] Before the second one is picked, the right half has a squ
+         +are the size of the artwork with the `pokeball` icon centred in
+         + it (tinted `textFaint`, larger than 24 but at most 72 so it st
+         +ays sharp). "Pick a Pokémon" sits below it where the name would
+         + be, so the two halves line up.                                
+      26  - [ ] Per stat (HP, Attack, Defense, Special Attack, Special De
+          fense, Speed) both values; the higher one is bold and purple. A
+           tie highlights neither.
+      27  - [ ] Each stat row has the full stat name (`formatStatName`) c
+          entred on its own line. Below it, one bar per side starts at th
+          e centre of the screen and grows outward (first Pokémon to the 
+          left, second to the right), with the value at the outer end of 
+          its bar. Bar length is value / 255, the same `getStatRatio` as 
+          the detail screen. Bars sit on the `track` colour. The higher s
+          ide's bar is purple and the lower side's bar is muted; in a tie
+           both bars are muted.
+      28  - [ ] A row "Total" with the sum of the six stats, highlighted 
+          the same way. It sits below a `divider` line, with "Total" in t
+          he middle and the two sums on the sides, and has no bars.
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 14: where do the loading and error states show for each
+     Pokémon? Stats need both Pokémon to be loaded. → In each half, stats wait
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 2 lines, removed 1 line
+      27  - [ ] Each stat row has the full stat name (`formatStatName`) c
+          entred on its own line. Below it, one bar per side starts at th
+          e centre of the screen and grows outward (first Pokémon to the 
+          left, second to the right), with the value at the outer end of 
+          its bar. Bar length is value / 255, the same `getStatRatio` as 
+          the detail screen. Bars sit on the `track` colour. The higher s
+          ide's bar is purple and the lower side's bar is muted; in a tie
+           both bars are muted.
+      28  - [ ] A row "Total" with the sum of the six stats, highlighted 
+          the same way. It sits below a `divider` line, with "Total" in t
+          he middle and the two sums on the sides, and has no bars.
+      29  - [ ] A "Change" button lets me pick another second Pokémon. It
+           is a small text button below the second Pokémon's type chips. 
+          Tapping it clears `second`, so that side shows "Pick a Pokémon"
+           again and the picker takes the place of the stats.
+      30 -- [ ] Loading and error state (with "Try again") for each Pokém
+         -on.                                                            
+      30 +- [ ] Loading and error state (with "Try again") for each Pokém
+         +on, in its own half. While it loads, a spinner sits in that hal
+         +f's artwork square. On error, `ErrorView` (message and "Try aga
+         +in", which calls that Pokémon's `refetch`) takes the place of t
+         +he artwork, name and chips.                                    
+      31 +- [ ] The stats section shows only when both Pokémon are loaded
+         +, with a spinner in its place until then.                      
+      32  
+      33  ## Out of Scope
+      34  
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 15: when one Pokémon has failed to load (its half shows
+     "Try again"), what goes in the stats section? → Nothing (Recommended)
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line, removed 1 line
+      28  - [ ] A row "Total" with the sum of the six stats, highlighted 
+          the same way. It sits below a `divider` line, with "Total" in t
+          he middle and the two sums on the sides, and has no bars.
+      29  - [ ] A "Change" button lets me pick another second Pokémon. It
+           is a small text button below the second Pokémon's type chips. 
+          Tapping it clears `second`, so that side shows "Pick a Pokémon"
+           again and the picker takes the place of the stats.
+      30  - [ ] Loading and error state (with "Try again") for each Pokém
+          on, in its own half. While it loads, a spinner sits in that hal
+          f's artwork square. On error, `ErrorView` (message and "Try aga
+          in", which calls that Pokémon's `refetch`) takes the place of t
+          he artwork, name and chips.
+      31 -- [ ] The stats section shows only when both Pokémon are loaded
+         -, with a spinner in its place until then.                      
+      31 +- [ ] The stats section shows only when both Pokémon are loaded
+         +, with a spinner in its place until then. If either one failed 
+         +to load, the stats section is empty: the error and "Try again" 
+         +show only in that half.                                        
+      32  
+      33  ## Out of Scope
+      34  
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 16: what goes in the header next to "Vorige", and what
+     are the colours of the screen? The detail screen has no title, a `daylight`
+     top and a `white` lower part. → No title, like detail (Recommended)
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line, removed 1 line
+       7  
+       8  ## Constraints
+       9  
+      10 -- Screen `src/app/compare.tsx`, opened with "Compare" in the op
+         -tions menu: that Pokémon is the first one (`/compare?first=25`)
+         -. Header with "Vorige", as on the detail screen.               
+      10 +- Screen `src/app/compare.tsx`, opened with "Compare" in the op
+         +tions menu: that Pokémon is the first one (`/compare?first=25`)
+         +. Header with "Vorige", as on the detail screen, and no title. 
+         +As on the detail screen, the two halves sit on `daylight` and t
+         +he stats (or the picker) sit below on `white`.                 
+      11  - The second one is picked on the same screen with the search f
+          ield and cards from the search feature (same filter function, s
+          ame list query).
+      12  - In the picker, tapping a card makes it the second Pokémon (it
+           does not open the detail). The cards have no ⋮ there, so there
+           is no options menu on the compare screen. `PokemonCard` gets a
+          n optional prop to hide the ⋮.
+      13  - With an empty search field the picker shows the full list in 
+          the two-column grid, as on the home screen. Typing filters it, 
+          and no match shows "No Pokémon found".
+
+⏺ User answered Claude's questions:
+  ⎿  · Compare, question 17: how does the picker scroll? The full list is long,
+     so it has to be a FlatList, and that can't sit inside a ScrollView. →
+     That’s enough questions. Use your recommended option for anything still
+     open. Write all answers into specs/features/compare.md now, and show me the
+     new file.
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Write(specs/features/compare.md)
+  ⎿  Added 10 lines, removed 5 lines
+      13  - With an empty search field the picker shows the full list in 
+          the two-column grid, as on the home screen. Typing filters it, 
+          and no match shows "No Pokémon found".
+      14  - The first Pokémon is left out of the picker list, so it canno
+          t be picked as the second one.
+      15  - The second one lives in the URL: picking sets `second` on the
+           same screen with `router.setParams` (`/compare?first=25&second
+          =4`), so nothing is pushed. "Vorige" always goes back to where 
+          Compare was opened from.
+      16 -- Stats from `/pokemon/{id}`: the same hook and cache as the de
+         -tail screen.                                                   
+      17 -- Who wins per stat is a plain function in `src/utils/`, withou
+         -t React.                                                       
+      18 -- Colours, font and chips as on the detail screen.             
+      16 +- A `second` that is missing, not a whole number or the same as
+         + `first` counts as not picked.                                 
+      17 +- Scrolling while picking: the picker grid is a `FlatList`, and
+         + the two halves are its header, so they scroll up with the grid
+         +. The search field stays pinned at the top once it gets there. 
+         +Once both are picked, the halves and the stats are one `ScrollV
+         +iew`.                                                          
+      18 +- Stats from `/pokemon/{id}`: the same hook and cache as the de
+         +tail screen (`usePokemon`), one query per Pokémon.             
+      19 +- Who wins per stat is a plain function in `src/utils/`, withou
+         +t React: `getStatWinner(first, second)` returns `'first'`, `'se
+         +cond'` or `'tie'`, and `getStatTotal(stats)` returns the sum. B
+         +oth go in `src/utils/pokemon.ts`, next to `getStatRatio`.      
+      20 +- Colours, font and chips as on the detail screen. The stat nam
+         +e and "Total" are 16 SemiBold `midnight`. Values are 16 Regular
+         + `textMuted`, and the higher value is 16 Bold `purple`.        
+      21  - One new colour token, `barMuted`: `#0E0940` at 20%, for the l
+          ower side's stat bar. It goes into `src/constants/theme.ts` and
+           gets a row in the colour table in `specs/design.md`.
+      22  
+      23  ## Acceptance Criteria
+     ...
+      26  - [ ] Each half of the top (first left, second right) is centre
+          d: square artwork, half the width, on `daylight`. Below it the 
+          name in 18 SemiBold, ending in `..` when it is too long, with `
+          #025` next to it in `textFaint`. Then the type chips.
+      27  - [ ] Before the second one is picked, the right half has a squ
+          are the size of the artwork with the `pokeball` icon centred in
+           it (tinted `textFaint`, larger than 24 but at most 72 so it st
+          ays sharp). "Pick a Pokémon" sits below it where the name would
+           be, so the two halves line up.
+      28  - [ ] Per stat (HP, Attack, Defense, Special Attack, Special De
+          fense, Speed) both values; the higher one is bold and purple. A
+           tie highlights neither.
+      27 -- [ ] Each stat row has the full stat name (`formatStatName`) c
+         -entred on its own line. Below it, one bar per side starts at th
+         -e centre of the screen and grows outward (first Pokémon to the 
+         -left, second to the right), with the value at the outer end of 
+         -its bar. Bar length is value / 255, the same `getStatRatio` as 
+         -the detail screen. Bars sit on the `track` colour. The higher s
+         -ide's bar is purple and the lower side's bar is muted; in a tie
+         - both bars are muted.                                          
+      29 +- [ ] Each stat row has the full stat name (`formatStatName`) c
+         +entred on its own line. Below it, one bar per side starts at th
+         +e centre of the screen and grows outward (first Pokémon to the 
+         +left, second to the right), with the value at the outer end of 
+         +its bar. Bar length is value / 255, the same `getStatRatio` as 
+         +the detail screen. Bars sit on the `track` colour. The higher s
+         +ide's bar is `purple` and the lower side's bar is `barMuted`; i
+         +n a tie both bars are `barMuted`.                              
+      30  - [ ] A row "Total" with the sum of the six stats, highlighted 
+          the same way. It sits below a `divider` line, with "Total" in t
+          he middle and the two sums on the sides, and has no bars.
+      29 -- [ ] A "Change" button lets me pick another second Pokémon. It
+         - is a small text button below the second Pokémon's type chips. 
+         -Tapping it clears `second`, so that side shows "Pick a Pokémon"
+         - again and the picker takes the place of the stats.            
+      31 +- [ ] A "Change" button lets me pick another second Pokémon. It
+         + is a small text button below the second Pokémon's type chips: 
+         +"Change" in 14 SemiBold `purple`. Tapping it clears `second`, s
+         +o that side shows "Pick a Pokémon" again and the picker takes t
+         +he place of the stats.                                         
+      32 +- [ ] While picking, I can scroll the whole list, and the searc
+         +h field stays reachable at the top.                            
+      33  - [ ] Loading and error state (with "Try again") for each Pokém
+          on, in its own half. While it loads, a spinner sits in that hal
+          f's artwork square. On error, `ErrorView` (message and "Try aga
+          in", which calls that Pokémon's `refetch`) takes the place of t
+          he artwork, name and chips.
+      34  - [ ] The stats section shows only when both Pokémon are loaded
+          , with a spinner in its place until then. If either one failed 
+          to load, the stats section is empty: the error and "Try again" 
+          show only in that half.
+      35 +- [ ] The picker list has its own loading and error state (spin
+         +ner, and `ErrorView` with "Try again"), as on the home screen. 
+      36  
+      37  ## Out of Scope
+      38  
+      39  - Type matchups or a battle prediction.
+      40  - More than two Pokémon.
+      41  - Swapping first and second.
+      42 +- Picking the first Pokémon on this screen: it always comes fro
+         +m the options menu.                                            
+
+⏺ All your answers from questions 1–16 are now in specs/features/compare.md. For
+  question 17 and anything else still open, I used my recommended option. I
+  didn't touch any code, theme.ts or design.md.
+
+  Where I picked the option myself (please check these):
+  - Scrolling (Q17): while you're picking, the two halves scroll away with the
+    grid and the search field stays pinned at the top. Once both Pokémon are
+    picked, the screen is one scroll view.
+  - Bad second in the URL: if it's missing, not a whole number or the same as
+    first, it counts as not picked.
+  - Winner functions: getStatWinner(first, second) returns 'first', 'second' or
+    'tie', and getStatTotal(stats) returns the sum. Both go in
+    src/utils/pokemon.ts, next to getStatRatio.
+  - Fonts: stat name and "Total" are 16 SemiBold midnight. Values are 16 Regular
+    textMuted, and the winning value is 16 Bold purple. "Change" is 14 SemiBold
+    purple.
+  - Picker list: it gets its own spinner and "Try again" error, as on the home
+    screen.
+  - Out of scope: you can't pick the first Pokémon on this screen; it always
+    comes from the options menu.
+
+  The new file:
+
+  # Compare
+
+  ## Goal
+
+  Put two Pokémon side by side and see who is stronger on which stat. Figma has
+  no screen for this, so it follows the style of the detail screen.
+
+  ## Constraints
+
+  - Screen `src/app/compare.tsx`, opened with "Compare" in the options menu:
+  that Pokémon is the first one (`/compare?first=25`). Header with "Vorige", as
+  on the detail screen, and no title. As on the detail screen, the two halves
+  sit on `daylight` and the stats (or the picker) sit below on `white`.
+  - The second one is picked on the same screen with the search field and cards
+  from the search feature (same filter function, same list query).
+  - In the picker, tapping a card makes it the second Pokémon (it does not open
+  the detail). The cards have no ⋮ there, so there is no options menu on the
+  compare screen. `PokemonCard` gets an optional prop to hide the ⋮.
+  - With an empty search field the picker shows the full list in the two-column
+  grid, as on the home screen. Typing filters it, and no match shows "No Pokémon
+  found".
+  - The first Pokémon is left out of the picker list, so it cannot be picked as
+  the second one.
+  - The second one lives in the URL: picking sets `second` on the same screen
+  with `router.setParams` (`/compare?first=25&second=4`), so nothing is pushed.
+  "Vorige" always goes back to where Compare was opened from.
+  - A `second` that is missing, not a whole number or the same as `first` counts
+  as not picked.
+  - Scrolling while picking: the picker grid is a `FlatList`, and the two halves
+  are its header, so they scroll up with the grid. The search field stays
+  pinned at the top once it gets there. Once both are picked, the halves and the
+  stats are one `ScrollView`.
+  - Stats from `/pokemon/{id}`: the same hook and cache as the detail screen
+  (`usePokemon`), one query per Pokémon.
+  - Who wins per stat is a plain function in `src/utils/`, without React:
+  `getStatWinner(first, second)` returns `'first'`, `'second'` or `'tie'`, and
+  `getStatTotal(stats)` returns the sum. Both go in `src/utils/pokemon.ts`, next
+  to `getStatRatio`.
+  - Colours, font and chips as on the detail screen. The stat name and "Total"
+  are 16 SemiBold `midnight`. Values are 16 Regular `textMuted`, and the higher
+  value is 16 Bold `purple`.
+  - One new colour token, `barMuted`: `#0E0940` at 20%, for the lower side's
+  stat bar. It goes into `src/constants/theme.ts` and gets a row in the colour
+  table in `specs/design.md`.
+
+  ## Acceptance Criteria
+
+  - [ ] At the top both Pokémon with artwork, name, number and type chips. Until
+  the second one is picked, its side says "Pick a Pokémon" and the search shows
+  below.
+  - [ ] Each half of the top (first left, second right) is centred: square
+  artwork, half the width, on `daylight`. Below it the name in 18 SemiBold,
+  ending in `..` when it is too long, with `#025` next to it in `textFaint`.
+  Then the type chips.
+  - [ ] Before the second one is picked, the right half has a square the size of
+  the artwork with the `pokeball` icon centred in it (tinted `textFaint`,
+  larger than 24 but at most 72 so it stays sharp). "Pick a Pokémon" sits below
+  it where the name would be, so the two halves line up.
+  - [ ] Per stat (HP, Attack, Defense, Special Attack, Special Defense, Speed)
+  both values; the higher one is bold and purple. A tie highlights neither.
+  - [ ] Each stat row has the full stat name (`formatStatName`) centred on its
+  own line. Below it, one bar per side starts at the centre of the screen and
+  grows outward (first Pokémon to the left, second to the right), with the value
+  at the outer end of its bar. Bar length is value / 255, the same
+  `getStatRatio` as the detail screen. Bars sit on the `track` colour. The
+  higher side's bar is `purple` and the lower side's bar is `barMuted`; in a tie
+  both bars are `barMuted`.
+  - [ ] A row "Total" with the sum of the six stats, highlighted the same way.
+  It sits below a `divider` line, with "Total" in the middle and the two sums on
+  the sides, and has no bars.
+  - [ ] A "Change" button lets me pick another second Pokémon. It is a small
+  text button below the second Pokémon's type chips: "Change" in 14 SemiBold
+  `purple`. Tapping it clears `second`, so that side shows "Pick a Pokémon"
+  again and the picker takes the place of the stats.
+  - [ ] While picking, I can scroll the whole list, and the search field stays
+  reachable at the top.
+  - [ ] Loading and error state (with "Try again") for each Pokémon, in its own
+  half. While it loads, a spinner sits in that half's artwork square. On error,
+  `ErrorView` (message and "Try again", which calls that Pokémon's `refetch`)
+  takes the place of the artwork, name and chips.
+  - [ ] The stats section shows only when both Pokémon are loaded, with a
+  spinner in its place until then. If either one failed to load, the stats
+  section is empty: the error and "Try again" show only in that half.
+  - [ ] The picker list has its own loading and error state (spinner, and
+  `ErrorView` with "Try again"), as on the home screen.
+
+  ## Out of Scope
+
+  - Type matchups or a battle prediction.
+  - More than two Pokémon.
+  - Swapping first and second.
+  - Picking the first Pokémon on this screen: it always comes from the options
+  menu.
+
+❯ Implement issue #6 from this spec. Follow AGENTS.md and reuse the shared
+  setup listed there. Replace the placeholder src/app/compare.tsx. Only touch
+  what this feature needs. Ask me before adding a dependency. First post your
+  plan on the issue, then wait for my go.
+
+  Ran 5 shell commands (ctrl+o to expand)
+⏺ Still in the planning step: I've read the code and am checking two technical
+  details before I post the plan on #6.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ The spec is committed, and router.setParams takes undefined to clear second.
+  Posting the plan now.
+
+  Made 1 scratchpad edit +42, ran 1 shell command (ctrl+o to expand)
+
+⏺ I posted the plan and task list on #6:
+  https://github.com/FatmanurV/pokedex/issues/6#issuecomment-6691875107. I
+  haven't written any code yet. No new dependency is needed.
+
+  The plan in short:
+  - Screen: I'll replace src/app/compare.tsx with a screen that has two modes:
+    - Picking: the existing grid, with the two halves and the search field on
+      top.
+    - Comparing: a scroll view with the halves and the stats.
+  - New components: compare-side.tsx (one half: loading, error, loaded or "Pick
+    a Pokémon") and compare-stats.tsx (the mirrored bars and "Total").
+  - Small changes to shared code: register the compare route with the detail
+    screen's "Vorige" header, show the ⋮ on a card only when it has a menu
+    handler, give the grid an optional header, add three small functions to
+    utils/pokemon.ts, add the barMuted colour, and add the new pieces to
+    AGENTS.md.
+
+  Three things I need you to decide (also in the comment):
+  1. Search field pinned at the top: the grid can only pin its whole header, so
+     pinning just the search field means building a second grid or a fragile
+     workaround. I'd let the halves and search field scroll away together and
+     change the spec to match. Is that OK?
+  2. Pokéball size: the icon file is 72 px, so it's only sharp at 24 on your
+     phone, and the spec's "at most 72 so it stays sharp" is wrong. I'd use 48,
+     which is slightly soft, and fix that line in the spec.
+  3. Picker background: per the spec it's white, but the white cards will stand
+     out less there than on the home screen's daylight background. I'll keep
+     white unless you'd rather have daylight.
+
+  I'll start building once you give the go, and tick off the tasks on the issue
+  as I finish them.
+
+❯ Go, with these answers:
+
+  Agreed: the halves and the search field scroll away together, nothing pinned.
+  Update that criterion in the spec.
+  Agreed: 48 for the pokéball, and fix that line in the spec.
+  Put the picker grid on daylight, like the home screen, so the white cards
+  stand out. Update that line in the spec too.
+
+  Tick off the tasks while you build. Do not commit.
+
+⏺ Building now. First the barMuted token and the spec updates.
+
+⏺ Update(src/constants/theme.ts)
+  ⎿  Added 2 lines
+      20    tabInactive: 'rgba(14, 9, 64, 0.5)',
+      21    divider: 'rgba(14, 9, 64, 0.15)',
+      22    track: 'rgba(14, 9, 64, 0.05)',
+      23 +  /** The lower side's stat bar on the compare screen. */      
+      24 +  barMuted: 'rgba(14, 9, 64, 0.2)',                            
+      25    shadow: 'rgba(14, 9, 64, 0.08)',
+      26    /** Grey background behind the options menu. */
+      27    overlay: 'rgba(14, 9, 64, 0.4)',
+
+⏺ Update(specs/design.md)
+  ⎿  Added 1 line
+      19  | `tabInactive` | `#0E0940` at 50% | Inactive tab label, inacti
+          ve tab bar item |
+      20  | `divider` | `#0E0940` at 15% | Line under the detail tabs |
+      21  | `track` | `#0E0940` at 5% | Background of a stat bar |
+      22 +| `barMuted` | `#0E0940` at 20% | The lower side's stat bar on 
+         +the compare screen |                                           
+      23  
+      24  ### Type colours (dot in the type chip)
+      25  
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line, removed 1 line
+       7  
+       8  ## Constraints
+       9  
+      10 -- Screen `src/app/compare.tsx`, opened with "Compare" in the op
+         -tions menu: that Pokémon is the first one (`/compare?first=25`)
+         -. Header with "Vorige", as on the detail screen, and no title. 
+         -As on the detail screen, the two halves sit on `daylight` and t
+         -he stats (or the picker) sit below on `white`.                 
+      10 +- Screen `src/app/compare.tsx`, opened with "Compare" in the op
+         +tions menu: that Pokémon is the first one (`/compare?first=25`)
+         +. Header with "Vorige", as on the detail screen, and no title. 
+         +As on the detail screen, the two halves sit on `daylight` and t
+         +he stats sit below on `white`. The picker grid stays on `daylig
+         +ht`, like the home screen, so the white cards stand out.       
+      11  - The second one is picked on the same screen with the search f
+          ield and cards from the search feature (same filter function, s
+          ame list query).
+      12  - In the picker, tapping a card makes it the second Pokémon (it
+           does not open the detail). The cards have no ⋮ there, so there
+           is no options menu on the compare screen. `PokemonCard` gets a
+          n optional prop to hide the ⋮.
+      13  - With an empty search field the picker shows the full list in 
+          the two-column grid, as on the home screen. Typing filters it, 
+          and no match shows "No Pokémon found".
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line, removed 1 line
+       9  
+      10  - Screen `src/app/compare.tsx`, opened with "Compare" in the op
+          tions menu: that Pokémon is the first one (`/compare?first=25`)
+          . Header with "Vorige", as on the detail screen, and no title. 
+          As on the detail screen, the two halves sit on `daylight` and t
+          he stats sit below on `white`. The picker grid stays on `daylig
+          ht`, like the home screen, so the white cards stand out.
+      11  - The second one is picked on the same screen with the search f
+          ield and cards from the search feature (same filter function, s
+          ame list query).
+      12 -- In the picker, tapping a card makes it the second Pokémon (it
+         - does not open the detail). The cards have no ⋮ there, so there
+         - is no options menu on the compare screen. `PokemonCard` gets a
+         -n optional prop to hide the ⋮.                                 
+      12 +- In the picker, tapping a card makes it the second Pokémon (it
+         + does not open the detail). The cards have no ⋮ there, so there
+         + is no options menu on the compare screen. `PokemonCard` only s
+         +hows the ⋮ when it gets `onMorePress`.                         
+      13  - With an empty search field the picker shows the full list in 
+          the two-column grid, as on the home screen. Typing filters it, 
+          and no match shows "No Pokémon found".
+      14  - The first Pokémon is left out of the picker list, so it canno
+          t be picked as the second one.
+      15  - The second one lives in the URL: picking sets `second` on the
+           same screen with `router.setParams` (`/compare?first=25&second
+          =4`), so nothing is pushed. "Vorige" always goes back to where 
+          Compare was opened from.
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line, removed 1 line
+      14  - The first Pokémon is left out of the picker list, so it canno
+          t be picked as the second one.
+      15  - The second one lives in the URL: picking sets `second` on the
+           same screen with `router.setParams` (`/compare?first=25&second
+          =4`), so nothing is pushed. "Vorige" always goes back to where 
+          Compare was opened from.
+      16  - A `second` that is missing, not a whole number or the same as
+           `first` counts as not picked.
+      17 -- Scrolling while picking: the picker grid is a `FlatList`, and
+         - the two halves are its header, so they scroll up with the grid
+         -. The search field stays pinned at the top once it gets there. 
+         -Once both are picked, the halves and the stats are one `ScrollV
+         -iew`.                                                          
+      17 +- Scrolling while picking: the picker grid is a `FlatList`, and
+         + the two halves are its header, and so is the search field belo
+         +w them: both scroll up with the grid, and nothing is pinned. On
+         +ce both are picked, the halves and the stats are one `ScrollVie
+         +w`.                                                            
+      18  - Stats from `/pokemon/{id}`: the same hook and cache as the de
+          tail screen (`usePokemon`), one query per Pokémon.
+      19  - Who wins per stat is a plain function in `src/utils/`, withou
+          t React: `getStatWinner(first, second)` returns `'first'`, `'se
+          cond'` or `'tie'`, and `getStatTotal(stats)` returns the sum. B
+          oth go in `src/utils/pokemon.ts`, next to `getStatRatio`.
+      20  - Colours, font and chips as on the detail screen. The stat nam
+          e and "Total" are 16 SemiBold `midnight`. Values are 16 Regular
+           `textMuted`, and the higher value is 16 Bold `purple`.
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line, removed 1 line
+      24  
+      25  - [ ] At the top both Pokémon with artwork, name, number and ty
+          pe chips. Until the second one is picked, its side says "Pick a
+           Pokémon" and the search shows below.
+      26  - [ ] Each half of the top (first left, second right) is centre
+          d: square artwork, half the width, on `daylight`. Below it the 
+          name in 18 SemiBold, ending in `..` when it is too long, with `
+          #025` next to it in `textFaint`. Then the type chips.
+      27 -- [ ] Before the second one is picked, the right half has a squ
+         -are the size of the artwork with the `pokeball` icon centred in
+         - it (tinted `textFaint`, larger than 24 but at most 72 so it st
+         -ays sharp). "Pick a Pokémon" sits below it where the name would
+         - be, so the two halves line up.                                
+      27 +- [ ] Before the second one is picked, the right half has a squ
+         +are the size of the artwork with the `pokeball` icon centred in
+         + it (48 × 48, tinted `textFaint`; the PNG is 72 px, so at 48 it
+         + is a little soft on a 3x screen). "Pick a Pokémon" sits below 
+         +it where the name would be, so the two halves line up.         
+      28  - [ ] Per stat (HP, Attack, Defense, Special Attack, Special De
+          fense, Speed) both values; the higher one is bold and purple. A
+           tie highlights neither.
+      29  - [ ] Each stat row has the full stat name (`formatStatName`) c
+          entred on its own line. Below it, one bar per side starts at th
+          e centre of the screen and grows outward (first Pokémon to the 
+          left, second to the right), with the value at the outer end of 
+          its bar. Bar length is value / 255, the same `getStatRatio` as 
+          the detail screen. Bars sit on the `track` colour. The higher s
+          ide's bar is `purple` and the lower side's bar is `barMuted`; i
+          n a tie both bars are `barMuted`.
+      30  - [ ] A row "Total" with the sum of the six stats, highlighted 
+          the same way. It sits below a `divider` line, with "Total" in t
+          he middle and the two sums on the sides, and has no bars.
+
+⏺ Update(specs/features/compare.md)
+  ⎿  Added 1 line, removed 1 line
+      29  - [ ] Each stat row has the full stat name (`formatStatName`) c
+          entred on its own line. Below it, one bar per side starts at th
+          e centre of the screen and grows outward (first Pokémon to the 
+          left, second to the right), with the value at the outer end of 
+          its bar. Bar length is value / 255, the same `getStatRatio` as 
+          the detail screen. Bars sit on the `track` colour. The higher s
+          ide's bar is `purple` and the lower side's bar is `barMuted`; i
+          n a tie both bars are `barMuted`.
+      30  - [ ] A row "Total" with the sum of the six stats, highlighted 
+          the same way. It sits below a `divider` line, with "Total" in t
+          he middle and the two sums on the sides, and has no bars.
+      31  - [ ] A "Change" button lets me pick another second Pokémon. It
+           is a small text button below the second Pokémon's type chips: 
+          "Change" in 14 SemiBold `purple`. Tapping it clears `second`, s
+          o that side shows "Pick a Pokémon" again and the picker takes t
+          he place of the stats.
+      32 -- [ ] While picking, I can scroll the whole list, and the searc
+         -h field stays reachable at the top.                            
+      32 +- [ ] While picking, I can scroll the whole list. The halves an
+         +d the search field scroll away with it, and scrolling back up b
+         +rings the search field back.                                   
+      33  - [ ] Loading and error state (with "Try again") for each Pokém
+          on, in its own half. While it loads, a spinner sits in that hal
+          f's artwork square. On error, `ErrorView` (message and "Try aga
+          in", which calls that Pokémon's `refetch`) takes the place of t
+          he artwork, name and chips.
+      34  - [ ] The stats section shows only when both Pokémon are loaded
+          , with a spinner in its place until then. If either one failed 
+          to load, the stats section is empty: the error and "Try again" 
+          show only in that half.
+      35  - [ ] The picker list has its own loading and error state (spin
+          ner, and `ErrorView` with "Try again"), as on the home screen.
+
+⏺ Now the utils.
+
+⏺ Update(src/utils/pokemon.ts)
+  ⎿  Added 21 lines
+       82    return Math.min(Math.max(value / MAX_BASE_STAT, 0), 1);
+       83  }
+       84  
+       85 +export type StatWinner = 'first' | 'second' | 'tie';          
+       86 +                                                              
+       87 +/** Which of two stat values is higher. Equal values are a tie
+          +. */                                                          
+       88 +export function getStatWinner(first: number, second: number): 
+          +StatWinner {                                                  
+       89 +  if (first > second) return 'first';                         
+       90 +  if (second > first) return 'second';                        
+       91 +  return 'tie';                                               
+       92 +}                                                             
+       93 +                                                              
+       94 +/** The sum of all stat values. */                            
+       95 +export function getStatTotal(stats: { value: number }[]): numb
+          +er {                                                          
+       96 +  return stats.reduce((sum, stat) => sum + stat.value, 0);    
+       97 +}                                                             
+       98 +                                                              
+       99 +/** A route param as a Pokémon id: `'25'` → 25. Missing, empty
+          +, a list, or not a positive whole number → `undefined`. */    
+      100 +export function parsePokemonId(param: string | string[] | unde
+          +fined): number | undefined {                                  
+      101 +  if (typeof param !== 'string' || !/^\d+$/.test(param)) retur
+          +n undefined;                                                  
+      102 +  const id = Number(param);                                   
+      103 +  return id > 0 ? id : undefined;                             
+      104 +}                                                             
+      105 +                                                              
+      106  /** The shape of a step in `/evolution-chain/{id}`. */
+      107  type EvolutionStep = {
+      108    species: { name: string; url: string };
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ Card and grid next.
+
+⏺ Update(src/components/pokemon-card.tsx)
+  ⎿  Added 1 line, removed 1 line
+      12    spriteUrl: string;
+      13    width: number;
+      14    onPress: () => void;
+      15 -  /** The ⋮ icon: opens the options menu. */                   
+      15 +  /** The ⋮ icon: opens the options menu. Without it there is n
+         +o ⋮. */                                                        
+      16    onMorePress?: () => void;
+      17  };
+      18  
+
+⏺ Update(src/components/pokemon-card.tsx)
+  ⎿  Added 9 lines, removed 7 lines
+      42          <Text numberOfLines={1} style={[styles.name, { color: t
+          heme.midnight }]}>
+      43            {displayName}
+      44          </Text>
+      45 -        <Pressable                                             
+      46 -          onPress={onMorePress}                                
+      47 -          hitSlop={Spacing.two}                                
+      48 -          accessibilityRole="button"                           
+      49 -          accessibilityLabel={`Options for ${displayName}`}>   
+      50 -          <Image source={require('@/assets/icons/more.png')} ti
+         -ntColor={theme.midnight} style={styles.icon} />                
+      51 -        </Pressable>                                           
+      45 +        {onMorePress && (                                      
+      46 +          <Pressable                                           
+      47 +            onPress={onMorePress}                              
+      48 +            hitSlop={Spacing.two}                              
+      49 +            accessibilityRole="button"                         
+      50 +            accessibilityLabel={`Options for ${displayName}`}> 
+      51 +            <Image source={require('@/assets/icons/more.png')} 
+         +tintColor={theme.midnight} style={styles.icon} />              
+      52 +          </Pressable>                                         
+      53 +        )}                                                     
+      54        </View>
+      55      </Pressable>
+      56    );
+
+⏺ Update(src/components/pokemon-grid.tsx)
+  ⎿  Added 12 lines, removed 4 lines
+      11  type Props = {
+      12    pokemon: { id: number; name: string }[];
+      13    onPressPokemon: (id: number) => void;
+      14 -  /** The ⋮ on a card: opens the options menu. */              
+      15 -  onMorePressPokemon: (pokemon: { id: number; name: string }) =
+         -> void;                                                        
+      14 +  /** The ⋮ on a card: opens the options menu. Without it the c
+         +ards have no ⋮. */                                             
+      15 +  onMorePressPokemon?: (pokemon: { id: number; name: string }) 
+         +=> void;                                                       
+      16    /** Shown when `pokemon` is empty. */
+      17    ListEmptyComponent: ReactElement;
+      18 +  /** Above the cards, scrolls with them. */                   
+      19 +  ListHeaderComponent?: ReactElement;                          
+      20  };
+      21  
+      20 -/** Two-column grid of Pokémon cards, used by the list and the 
+         -favorites. */                                                  
+      21 -export function PokemonGrid({ pokemon, onPressPokemon, onMorePr
+         -essPokemon, ListEmptyComponent }: Props) {                     
+      22 +/** Two-column grid of Pokémon cards, used by the list, the fav
+         +orites and the compare picker. */                              
+      23 +export function PokemonGrid({                                  
+      24 +  pokemon,                                                     
+      25 +  onPressPokemon,                                              
+      26 +  onMorePressPokemon,                                          
+      27 +  ListEmptyComponent,                                          
+      28 +  ListHeaderComponent,                                         
+      29 +}: Props) {                                                    
+      30    const { width } = useWindowDimensions();
+      31    const cardWidth = (width - SIDE_PADDING * 2 - GAP) / 2;
+      32  
+
+⏺ Update(src/components/pokemon-grid.tsx)
+  ⎿  Added 2 lines, removed 1 line
+      42            spriteUrl={getSpriteUrl(item.id)}
+      43            width={cardWidth}
+      44            onPress={() => onPressPokemon(item.id)}
+      45 -          onMorePress={() => onMorePressPokemon(item)}         
+      45 +          onMorePress={onMorePressPokemon && (() => onMorePress
+         +Pokemon(item))}                                                
+      46          />
+      47        )}
+      48        ListEmptyComponent={ListEmptyComponent}
+      49 +      ListHeaderComponent={ListHeaderComponent}                
+      50        columnWrapperStyle={styles.row}
+      51        contentContainerStyle={styles.list}
+      52        initialNumToRender={8}
+
+⏺ Now the route in _layout.tsx, sharing the detail header options.
+
+⏺ Update(src/app/_layout.tsx)
+  ⎿  Added 15 lines, removed 14 lines
+      43      />
+      44    );
+      45  
+      46 +  // No title, "Vorige" on the left, on the daylight background
+         +. Detail and compare.                                          
+      47 +  const backHeaderOptions = {                                  
+      48 +    title: '',                                                 
+      49 +    headerStyle: { backgroundColor: theme.daylight },          
+      50 +    headerShadowVisible: false,                                
+      51 +    // Android and older iOS.                                  
+      52 +    headerLeft: () => backButton,                              
+      53 +    // iOS 26: the same button, without the Liquid Glass pill b
+         +ehind it.                                                      
+      54 +    unstable_headerLeftItems: () => [                          
+      55 +      { type: 'custom' as const, element: backButton, hidesShar
+         +edBackground: true },                                          
+      56 +    ],                                                         
+      57 +  };                                                           
+      58 +                                                               
+      59    return (
+      60      <ThemeProvider value={navigationTheme}>
+      61        <StatusBar style="dark" />
+     ...
+      63        <QueryClientProvider client={queryClient}>
+      64          <Stack>
+      65            <Stack.Screen name="(tabs)" options={{ headerShown: f
+          alse }} />
+      53 -          <Stack.Screen                                        
+      54 -            name="pokemon/[id]"                                
+      55 -            options={{                                         
+      56 -              title: '',                                       
+      57 -              headerStyle: { backgroundColor: theme.daylight },
+      58 -              headerShadowVisible: false,                      
+      59 -              // Android and older iOS.                        
+      60 -              headerLeft: () => backButton,                    
+      61 -              // iOS 26: the same button, without the Liquid Gl
+         -ass pill behind it.                                            
+      62 -              unstable_headerLeftItems: () => [                
+      63 -                { type: 'custom', element: backButton, hidesSha
+         -redBackground: true },                                         
+      64 -              ],                                               
+      65 -            }}                                                 
+      66 -          />                                                   
+      66 +          <Stack.Screen name="pokemon/[id]" options={backHeader
+         +Options} />                                                    
+      67 +          <Stack.Screen name="compare" options={backHeaderOptio
+         +ns} />                                                         
+      68          </Stack>
+      69        </QueryClientProvider>
+      70      </ThemeProvider>
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ Route registered and typecheck is clean. Next, the two compare components.
+⏺ Write(src/components/compare-side.tsx)
+  ⎿  Wrote 102 lines to src/components/compare-side.tsx
+      1 import { Image } from 'expo-image';
+      2 import { ActivityIndicator, Pressable, StyleSheet, Text, View } f
+        rom 'react-native';
+      3
+      4 import { ErrorView } from '@/components/error-view';
+      5 import { TypeChip } from '@/components/type-chip';
+      6 import { Fonts, Radius, Spacing } from '@/constants/theme';
+      7 import { useTheme } from '@/hooks/use-theme';
+      8 import { getArtworkUrl, type Pokemon } from '@/services/pokeapi';
+      9 import { formatName, formatNumber } from '@/utils/pokemon';
+     … +93 lines (ctrl+o to expand)
+
+⏺ Write(src/components/compare-stats.tsx)
+  ⎿  Wrote 106 lines to src/components/compare-stats.tsx
+       1 import { StyleSheet, Text, View } from 'react-native';
+       2
+       3 import { Fonts, Radius, Spacing } from '@/constants/theme';
+       4 import { useTheme } from '@/hooks/use-theme';
+       5 import type { PokemonStat } from '@/services/pokeapi';
+       6 import {
+       7   formatStatName,
+       8   getStatRatio,
+       9   getStatTotal,
+      10   getStatWinner,
+     … +96 lines (ctrl+o to expand)
+
+⏺ Now the screen itself.
+
+⏺ Write(src/app/compare.tsx)
+  ⎿  Added 116 lines, removed 9 lines
+        1 -import { useLocalSearchParams } from 'expo-router';           
+        2 -import { StyleSheet, Text, View } from 'react-native';        
+        1 +import { router, useLocalSearchParams } from 'expo-router';   
+        2 +import { useState } from 'react';                             
+        3 +import { ActivityIndicator, Keyboard, ScrollView, StyleSheet, 
+          +Text, useWindowDimensions, View } from 'react-native';        
+        4 +import { useSafeAreaInsets } from 'react-native-safe-area-cont
+          +ext';                                                         
+        5  
+        6 +import { CompareEmptySide, CompareSide } from '@/components/co
+          +mpare-side';                                                  
+        7 +import { CompareStats } from '@/components/compare-stats';    
+        8 +import { ErrorView } from '@/components/error-view';          
+        9 +import { PokemonGrid } from '@/components/pokemon-grid';      
+       10 +import { SearchField } from '@/components/search-field';      
+       11  import { Fonts, Spacing } from '@/constants/theme';
+       12 +import { usePokemon } from '@/hooks/use-pokemon';             
+       13 +import { usePokemonList } from '@/hooks/use-pokemon-list';    
+       14  import { useTheme } from '@/hooks/use-theme';
+       15 +import { filterByName, parsePokemonId } from '@/utils/pokemon'
+          +;                                                             
+       16  
+        7 -/** Placeholder so "Compare" in the options menu has a route. 
+          -Issue #6 builds the screen. */                                
+       17 +const SIDE_PADDING = Spacing.four;                            
+       18 +const GAP = Spacing.three;                                    
+       19 +                                                              
+       20  export default function CompareScreen() {
+       21    const theme = useTheme();
+       10 -  const { first } = useLocalSearchParams<{ first?: string }>()
+          -;                                                             
+       22 +  const insets = useSafeAreaInsets();                         
+       23 +  const { width } = useWindowDimensions();                    
+       24 +  const params = useLocalSearchParams<{ first: string; second?
+          +: string }>();                                                
+       25 +  // Like the detail screen: a bad id gets the normal "not fou
+          +nd" error.                                                    
+       26 +  const firstId = Number(params.first);                       
+       27 +  const parsedSecond = parsePokemonId(params.second);         
+       28 +  const secondId = parsedSecond === firstId ? undefined : pars
+          +edSecond;                                                     
+       29 +  const [query, setQuery] = useState('');                     
+       30  
+       31 +  const first = usePokemon(firstId);                          
+       32 +  const second = usePokemon(secondId);                        
+       33 +  const list = usePokemonList();                              
+       34 +                                                              
+       35 +  const halfSize = (width - SIDE_PADDING * 2 - GAP) / 2;      
+       36 +                                                              
+       37 +  function onPick(id: number) {                               
+       38 +    Keyboard.dismiss();                                       
+       39 +    setQuery('');                                             
+       40 +    router.setParams({ second: String(id) });                 
+       41 +  }                                                           
+       42 +                                                              
+       43 +  function onChange() {                                       
+       44 +    router.setParams({ second: undefined });                  
+       45 +  }                                                           
+       46 +                                                              
+       47 +  const firstSide = (                                         
+       48 +    <CompareSide                                              
+       49 +      size={halfSize}                                         
+       50 +      pokemon={first.data}                                    
+       51 +      isPending={first.isPending}                             
+       52 +      error={first.error}                                     
+       53 +      onRetry={() => first.refetch()}                         
+       54 +    />                                                        
+       55 +  );                                                          
+       56 +                                                              
+       57 +  if (secondId === undefined) {                               
+       58 +    let empty;                                                
+       59 +    if (list.data) {                                          
+       60 +      empty = <Text style={[styles.empty, { color: theme.textM
+          +uted }]}>No Pokémon found</Text>;                             
+       61 +    } else if (list.isPending) {                              
+       62 +      empty = <ActivityIndicator size="large" color={theme.pur
+          +ple} style={styles.listState} />;                             
+       63 +    } else {                                                  
+       64 +      empty = (                                               
+       65 +        <View style={styles.listState}>                       
+       66 +          <ErrorView message={list.error?.message ?? 'Somethin
+          +g went wrong'} onRetry={() => list.refetch()} />              
+       67 +        </View>                                               
+       68 +      );                                                      
+       69 +    }                                                         
+       70 +                                                              
+       71 +    return (                                                  
+       72 +      <View style={[styles.container, { backgroundColor: theme
+          +.daylight }]}>                                                
+       73 +        <PokemonGrid                                          
+       74 +          pokemon={list.data ? filterByName(list.data, query).
+          +filter((pokemon) => pokemon.id !== firstId) : []}             
+       75 +          onPressPokemon={onPick}                             
+       76 +          ListEmptyComponent={empty}                          
+       77 +          ListHeaderComponent={                               
+       78 +            <View style={styles.pickerHeader}>                
+       79 +              <View style={styles.halves}>                    
+       80 +                {firstSide}                                   
+       81 +                <CompareEmptySide size={halfSize} />          
+       82 +              </View>                                         
+       83 +              <SearchField value={query} onChangeText={setQuer
+          +y} />                                                         
+       84 +            </View>                                           
+       85 +          }                                                   
+       86 +        />                                                    
+       87 +      </View>                                                 
+       88 +    );                                                        
+       89 +  }                                                           
+       90 +                                                              
+       91 +  // The stats wait for both. If one failed, its half shows th
+          +e error and the stats stay empty.                             
+       92 +  let stats = null;                                           
+       93 +  if (first.data && second.data) {                            
+       94 +    stats = <CompareStats first={first.data.stats} second={sec
+          +ond.data.stats} />;                                           
+       95 +  } else if (!(first.isError && !first.data) && !(second.isErr
+          +or && !second.data)) {                                        
+       96 +    stats = <ActivityIndicator size="large" color={theme.purpl
+          +e} />;                                                        
+       97 +  }                                                           
+       98 +                                                              
+       99    return (
+       13 -    <View style={[styles.center, { backgroundColor: theme.dayl
+          -ight }]}>                                                     
+       14 -      <Text style={[styles.text, { color: theme.textMuted }]}>
+          -Compare #{first} comes with issue #6</Text>                   
+       15 -    </View>                                                   
+      100 +    <ScrollView style={{ backgroundColor: theme.daylight }} co
+          +ntentContainerStyle={styles.content}>                         
+      101 +      <View style={[styles.halves, styles.top]}>              
+      102 +        {firstSide}                                           
+      103 +        <CompareSide                                          
+      104 +          size={halfSize}                                     
+      105 +          pokemon={second.data}                               
+      106 +          isPending={second.isPending}                        
+      107 +          error={second.error}                                
+      108 +          onRetry={() => second.refetch()}                    
+      109 +          onChange={onChange}                                 
+      110 +        />                                                    
+      111 +      </View>                                                 
+      112 +      <View style={[styles.bottom, { backgroundColor: theme.wh
+          +ite, paddingBottom: insets.bottom + Spacing.five }]}>         
+      113 +        {stats}                                               
+      114 +      </View>                                                 
+      115 +    </ScrollView>                                             
+      116    );
+      117  }
+      118  
+      119  const styles = StyleSheet.create({
+       20 -  center: { flex: 1, alignItems: 'center', justifyContent: 'ce
+          -nter', padding: Spacing.four },                               
+       21 -  text: { fontFamily: Fonts.regular, fontSize: 16, textAlign: 
+          -'center' },                                                   
+      120 +  container: { flex: 1 },                                     
+      121 +  // flexGrow so the white part reaches the bottom of the scre
+          +en when the content is short.                                 
+      122 +  content: { flexGrow: 1 },                                   
+      123 +  halves: { flexDirection: 'row', alignItems: 'flex-start', ga
+          +p: GAP },                                                     
+      124 +  top: { paddingHorizontal: SIDE_PADDING, paddingTop: Spacing.
+          +three, paddingBottom: Spacing.four },                         
+      125 +  bottom: { flexGrow: 1, paddingHorizontal: SIDE_PADDING, padd
+          +ingTop: Spacing.four },                                       
+      126 +  pickerHeader: { paddingTop: Spacing.three, gap: Spacing.four
+          + },                                                           
+      127 +  listState: { paddingTop: Spacing.five },                    
+      128 +  empty: { fontFamily: Fonts.regular, fontSize: 16, textAlign:
+          + 'center', paddingTop: Spacing.five },                        
+      129  });
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+⏺ Typecheck and lint both pass. Ticking off the tasks so far, then I'll update
+  AGENTS.md.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ Update(AGENTS.md)
+  ⎿  Added 1 line, removed 1 line
+      36  - Header button (icon, optional label): `src/components/header-
+          button.tsx`. On iOS 26, pass it through `unstable_headerLeftIte
+          ms` / `unstable_headerRightItems` with `hidesSharedBackground: 
+          true` to hide the glass pill, and through `headerLeft` / `heade
+          rRight` for Android.
+      37  - Stat name and bar length (relative to 255): `formatStatName` 
+          and `getStatRatio` in `src/utils/pokemon.ts`.
+      38  - Favorites in SQLite (table `favorites`, database opened once)
+          : `src/services/favorites-db.ts`. Hooks: `useFavorites()`, `use
+          IsFavorite(id)` and `useToggleFavorite()` (optimistic, keys `['
+          favorites']` and `['favorites', id]`) in `src/hooks/use-favorit
+          es.ts`.
+      39 -- Two-column card grid (list, favorites): `src/components/pokem
+         -on-grid.tsx`.                                                  
+      39 +- Two-column card grid (list, favorites, compare picker): `src/
+         +components/pokemon-grid.tsx`. Optional `ListHeaderComponent` sc
+         +rolls with the cards. Leave out `onMorePressPokemon` (or `onMor
+         +ePress` on `PokemonCard`) for cards without ⋮.                 
+      40  - Header button colour: optional `tintColor` on `HeaderButton` 
+          (default `midnight`), e.g. `red` for the filled heart.
+      41  - Options menu (overlay + bottom sheet, `Modal`): `src/componen
+          ts/options-menu.tsx`. Its props come from `usePokemonOptions(se
+          lected, onClose)` in `src/hooks/use-pokemon-options.ts`: `<Opti
+          onsMenu {...options} />`. Overlay colour: `overlay` token.
+      42  - Share text and Bulbapedia link: `getShareMessage` and `getBul
+          bapediaUrl` in `src/utils/pokemon.ts` (uses `speciesName` from 
+          `usePokemon`).
+
+⏺ Update(AGENTS.md)
+  ⎿  Added 3 lines
+      40  - Header button colour: optional `tintColor` on `HeaderButton` 
+          (default `midnight`), e.g. `red` for the filled heart.
+      41  - Options menu (overlay + bottom sheet, `Modal`): `src/componen
+          ts/options-menu.tsx`. Its props come from `usePokemonOptions(se
+          lected, onClose)` in `src/hooks/use-pokemon-options.ts`: `<Opti
+          onsMenu {...options} />`. Overlay colour: `overlay` token.
+      42  - Share text and Bulbapedia link: `getShareMessage` and `getBul
+          bapediaUrl` in `src/utils/pokemon.ts` (uses `speciesName` from 
+          `usePokemon`).
+      43 +- Header with "Vorige" and no title: `backHeaderOptions` in `sr
+         +c/app/_layout.tsx`, used by `pokemon/[id]` and `compare`.      
+      44 +- Who wins a stat and the stat total: `getStatWinner` (`'first'
+         + | 'second' | 'tie'`) and `getStatTotal` in `src/utils/pokemon.
+         +ts`. Pokémon id from a route param (`undefined` if invalid): `p
+         +arsePokemonId`.                                                
+      45 +- Compare halves and stat rows: `CompareSide`, `CompareEmptySid
+         +e` in `src/components/compare-side.tsx` and `CompareStats` in `
+         +src/components/compare-stats.tsx`. Muted bar colour: `barMuted`
+         + token.                                                        
+      46  
+      47  ## Rules
+      48  
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ The compare screen (issue #6) is built, and npx tsc --noEmit and npx expo lint
+  both pass. I couldn't run it on a phone, so the layout hasn't been checked on
+  a screen yet. All tasks are ticked off on the issue
+  (https://github.com/FatmanurV/pokedex/issues/6#issuecomment-6691875107).
+  Nothing is committed, and no dependency was added.
+
+  What it does:
+  - Picking: the two halves and the search field sit at the top of the grid on
+    daylight and scroll away with it. The cards have no ⋮, and the first Pokémon
+    isn't in the list. Tapping a card closes the keyboard, clears the search
+    and sets second in the URL.
+  - Comparing: the halves sit on daylight and the stats on white below. Each
+    stat has its name centred, with bars growing outward from the centre, purple
+    for the winner and barMuted for the other. Below a line is "Total" without
+    bars. "Change" under the second Pokémon's chips clears second.
+  - Loading and errors: each half has its own spinner or "Try again". The stats
+    show a spinner until both have loaded, and stay empty if one failed. The
+    picker list has its own spinner and error too.
+
+  Files:
+  - Spec (compare.md (specs/features/compare.md)): your three answers are in it
+    (nothing pinned, pokéball at 48, picker on daylight). I also changed the
+    line about hiding the ⋮: the card now shows it only when it gets
+    onMorePress, so there's no new prop.
+  - New: compare-side.tsx (src/components/compare-side.tsx) and
+    compare-stats.tsx (src/components/compare-stats.tsx).
+  - Changed:
+    - compare.tsx (src/app/compare.tsx) replaces the placeholder.
+    - _layout.tsx (src/app/_layout.tsx): the "Vorige" header options are now one
+      shared object, used by the detail screen and compare.
+    - pokemon-card.tsx (src/components/pokemon-card.tsx) and pokemon-grid.tsx
+      (src/components/pokemon-grid.tsx): no ⋮ without a menu handler, and the
+      grid can take a header.
+    - pokemon.ts (src/utils/pokemon.ts) has getStatWinner, getStatTotal and
+      parsePokemonId.
+    - barMuted is in theme.ts (src/constants/theme.ts) and design.md
+      (specs/design.md), and the new shared pieces are listed in AGENTS.md.
+
+  Worth checking when you test:
+  - Long names like "Crabominable" should end in .. while #xxx stays visible.
+  - Type in the search field, then tap a card: it should pick on the first tap,
+    even with the keyboard open.
+  - "Vorige" should go back to the screen you opened Compare from, even after
+    picking and changing a few times.
+  - The ⋮ menus on the home and favorites cards should still work.

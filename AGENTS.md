@@ -36,10 +36,13 @@ Reuse what is listed here, never add a second one. When you set up something new
 - Header button (icon, optional label): `src/components/header-button.tsx`. On iOS 26, pass it through `unstable_headerLeftItems` / `unstable_headerRightItems` with `hidesSharedBackground: true` to hide the glass pill, and through `headerLeft` / `headerRight` for Android.
 - Stat name and bar length (relative to 255): `formatStatName` and `getStatRatio` in `src/utils/pokemon.ts`.
 - Favorites in SQLite (table `favorites`, database opened once): `src/services/favorites-db.ts`. Hooks: `useFavorites()`, `useIsFavorite(id)` and `useToggleFavorite()` (optimistic, keys `['favorites']` and `['favorites', id]`) in `src/hooks/use-favorites.ts`.
-- Two-column card grid (list, favorites): `src/components/pokemon-grid.tsx`.
+- Two-column card grid (list, favorites, compare picker): `src/components/pokemon-grid.tsx`. Optional `ListHeaderComponent` scrolls with the cards. Leave out `onMorePressPokemon` (or `onMorePress` on `PokemonCard`) for cards without ⋮.
 - Header button colour: optional `tintColor` on `HeaderButton` (default `midnight`), e.g. `red` for the filled heart.
 - Options menu (overlay + bottom sheet, `Modal`): `src/components/options-menu.tsx`. Its props come from `usePokemonOptions(selected, onClose)` in `src/hooks/use-pokemon-options.ts`: `<OptionsMenu {...options} />`. Overlay colour: `overlay` token.
 - Share text and Bulbapedia link: `getShareMessage` and `getBulbapediaUrl` in `src/utils/pokemon.ts` (uses `speciesName` from `usePokemon`).
+- Header with "Vorige" and no title: `backHeaderOptions` in `src/app/_layout.tsx`, used by `pokemon/[id]` and `compare`.
+- Who wins a stat and the stat total: `getStatWinner` (`'first' | 'second' | 'tie'`) and `getStatTotal` in `src/utils/pokemon.ts`. Pokémon id from a route param (`undefined` if invalid): `parsePokemonId`.
+- Compare halves and stat rows: `CompareSide`, `CompareEmptySide` in `src/components/compare-side.tsx` and `CompareStats` in `src/components/compare-stats.tsx`. Muted bar colour: `barMuted` token.
 
 ## Rules
 

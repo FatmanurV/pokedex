@@ -19,6 +19,7 @@ as a token. No hex codes anywhere else.
 | `tabInactive` | `#0E0940` at 50% | Inactive tab label, inactive tab bar item |
 | `divider` | `#0E0940` at 15% | Line under the detail tabs |
 | `track` | `#0E0940` at 5% | Background of a stat bar |
+| `barMuted` | `#0E0940` at 20% | The lower side's stat bar on the compare screen |
 
 ### Type colours (dot in the type chip)
 

@@ -43,6 +43,19 @@ export default function RootLayout() {
     />
   );
 
+  // No title, "Vorige" on the left, on the daylight background. Detail and compare.
+  const backHeaderOptions = {
+    title: '',
+    headerStyle: { backgroundColor: theme.daylight },
+    headerShadowVisible: false,
+    // Android and older iOS.
+    headerLeft: () => backButton,
+    // iOS 26: the same button, without the Liquid Glass pill behind it.
+    unstable_headerLeftItems: () => [
+      { type: 'custom' as const, element: backButton, hidesSharedBackground: true },
+    ],
+  };
+
   return (
     <ThemeProvider value={navigationTheme}>
       <StatusBar style="dark" />
@@ -50,20 +63,8 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="pokemon/[id]"
-            options={{
-              title: '',
-              headerStyle: { backgroundColor: theme.daylight },
-              headerShadowVisible: false,
-              // Android and older iOS.
-              headerLeft: () => backButton,
-              // iOS 26: the same button, without the Liquid Glass pill behind it.
-              unstable_headerLeftItems: () => [
-                { type: 'custom', element: backButton, hidesSharedBackground: true },
-              ],
-            }}
-          />
+          <Stack.Screen name="pokemon/[id]" options={backHeaderOptions} />
+          <Stack.Screen name="compare" options={backHeaderOptions} />
         </Stack>
       </QueryClientProvider>
     </ThemeProvider>

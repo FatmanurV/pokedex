@@ -20,6 +20,8 @@ export const Colors = {
   tabInactive: 'rgba(14, 9, 64, 0.5)',
   divider: 'rgba(14, 9, 64, 0.15)',
   track: 'rgba(14, 9, 64, 0.05)',
+  /** The lower side's stat bar on the compare screen. */
+  barMuted: 'rgba(14, 9, 64, 0.2)',
   shadow: 'rgba(14, 9, 64, 0.08)',
   /** Grey background behind the options menu. */
   overlay: 'rgba(14, 9, 64, 0.4)',
