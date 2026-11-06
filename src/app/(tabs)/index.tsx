@@ -4,11 +4,14 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ErrorView } from '@/components/error-view';
+import { OptionsMenu } from '@/components/options-menu';
 import { PokemonGrid } from '@/components/pokemon-grid';
 import { SearchField } from '@/components/search-field';
 import { Fonts, Spacing } from '@/constants/theme';
 import { usePokemonList } from '@/hooks/use-pokemon-list';
+import { usePokemonOptions } from '@/hooks/use-pokemon-options';
 import { useTheme } from '@/hooks/use-theme';
+import type { PokemonSummary } from '@/services/pokeapi';
 import { filterByName } from '@/utils/pokemon';
 
 const SIDE_PADDING = Spacing.four;
@@ -17,6 +20,8 @@ export default function HomeScreen() {
   const theme = useTheme();
   const { data, error, isPending, refetch } = usePokemonList();
   const [query, setQuery] = useState('');
+  const [selected, setSelected] = useState<PokemonSummary | null>(null);
+  const options = usePokemonOptions(selected, () => setSelected(null));
 
   let content;
   if (isPending) {
@@ -30,6 +35,7 @@ export default function HomeScreen() {
       <PokemonGrid
         pokemon={filterByName(data, query)}
         onPressPokemon={(id) => router.push({ pathname: '/pokemon/[id]', params: { id } })}
+        onMorePressPokemon={setSelected}
         ListEmptyComponent={
           <Text style={[styles.empty, { color: theme.textMuted }]}>No Pokémon found</Text>
         }
@@ -46,6 +52,7 @@ export default function HomeScreen() {
       </View>
       <Text style={[styles.title, { color: theme.midnight }]}>All Pokémon</Text>
       {content}
+      <OptionsMenu {...options} />
     </SafeAreaView>
   );
 }

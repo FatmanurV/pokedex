@@ -21,6 +21,8 @@ export const Colors = {
   divider: 'rgba(14, 9, 64, 0.15)',
   track: 'rgba(14, 9, 64, 0.05)',
   shadow: 'rgba(14, 9, 64, 0.08)',
+  /** Grey background behind the options menu. */
+  overlay: 'rgba(14, 9, 64, 0.4)',
 } as const;
 
 export type ThemeColor = keyof typeof Colors;

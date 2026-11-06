@@ -12,7 +12,7 @@ type Props = {
   spriteUrl: string;
   width: number;
   onPress: () => void;
-  /** The ⋮ icon is always shown. Its menu comes with the feature "Options menu". */
+  /** The ⋮ icon: opens the options menu. */
   onMorePress?: () => void;
 };
 

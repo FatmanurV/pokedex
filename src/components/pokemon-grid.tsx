@@ -11,12 +11,14 @@ const GAP = Spacing.three;
 type Props = {
   pokemon: { id: number; name: string }[];
   onPressPokemon: (id: number) => void;
+  /** The ⋮ on a card: opens the options menu. */
+  onMorePressPokemon: (pokemon: { id: number; name: string }) => void;
   /** Shown when `pokemon` is empty. */
   ListEmptyComponent: ReactElement;
 };
 
 /** Two-column grid of Pokémon cards, used by the list and the favorites. */
-export function PokemonGrid({ pokemon, onPressPokemon, ListEmptyComponent }: Props) {
+export function PokemonGrid({ pokemon, onPressPokemon, onMorePressPokemon, ListEmptyComponent }: Props) {
   const { width } = useWindowDimensions();
   const cardWidth = (width - SIDE_PADDING * 2 - GAP) / 2;
 
@@ -32,6 +34,7 @@ export function PokemonGrid({ pokemon, onPressPokemon, ListEmptyComponent }: Pro
           spriteUrl={getSpriteUrl(item.id)}
           width={cardWidth}
           onPress={() => onPressPokemon(item.id)}
+          onMorePress={() => onMorePressPokemon(item)}
         />
       )}
       ListEmptyComponent={ListEmptyComponent}

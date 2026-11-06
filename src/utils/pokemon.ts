@@ -35,6 +35,25 @@ export function formatNumber(id: number): string {
   return String(id).padStart(3, '0');
 }
 
+/**
+ * `pikachu` → `https://bulbapedia.bulbagarden.net/wiki/Pikachu_(Pokémon)`.
+ * Names with punctuation (Mr. Mime, Farfetch'd) are not handled.
+ */
+export function getBulbapediaUrl(speciesName: string): string {
+  return `https://bulbapedia.bulbagarden.net/wiki/${formatName(speciesName).replace(/ /g, '_')}_(Pokémon)`;
+}
+
+/** `Pikachu #025 – Electric` and the Bulbapedia link on the next line. Two types: `Grass/Poison`. */
+export function getShareMessage(pokemon: {
+  id: number;
+  name: string;
+  speciesName: string;
+  types: string[];
+}): string {
+  const types = pokemon.types.map(formatName).join('/');
+  return `${formatName(pokemon.name)} #${formatNumber(pokemon.id)} – ${types}\n${getBulbapediaUrl(pokemon.speciesName)}`;
+}
+
 /** Hectograms → `6.9 kg`. */
 export function formatWeight(hectograms: number): string {
   return `${hectograms / 10} kg`;

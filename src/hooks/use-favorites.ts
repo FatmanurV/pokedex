@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { skipToken, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
   addFavorite,
@@ -16,11 +16,11 @@ export function useFavorites() {
   });
 }
 
-/** Whether this Pokémon is a favorite. */
-export function useIsFavorite(id: number) {
+/** Whether this Pokémon is a favorite. Waits while the id is `undefined`. */
+export function useIsFavorite(id: number | undefined) {
   return useQuery({
     queryKey: ['favorites', id],
-    queryFn: () => isFavorite(id),
+    queryFn: id === undefined ? skipToken : () => isFavorite(id),
   });
 }
 

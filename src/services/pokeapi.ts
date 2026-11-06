@@ -51,6 +51,8 @@ export type Pokemon = {
   name: string;
   /** Not the same as `id` for forms (10001 and up), so it comes from `species.url`. */
   speciesId: number;
+  /** `charizard` for `charizard-mega-x`. */
+  speciesName: string;
   baseExperience: number | null;
   /** In decimetres. */
   height: number;
@@ -71,6 +73,7 @@ export async function getPokemon(id: number): Promise<Pokemon> {
     id: data.id,
     name: data.name,
     speciesId: getIdFromUrl(data.species.url),
+    speciesName: data.species.name,
     baseExperience: data.base_experience,
     height: data.height,
     weight: data.weight,

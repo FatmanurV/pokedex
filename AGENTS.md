@@ -38,6 +38,8 @@ Reuse what is listed here, never add a second one. When you set up something new
 - Favorites in SQLite (table `favorites`, database opened once): `src/services/favorites-db.ts`. Hooks: `useFavorites()`, `useIsFavorite(id)` and `useToggleFavorite()` (optimistic, keys `['favorites']` and `['favorites', id]`) in `src/hooks/use-favorites.ts`.
 - Two-column card grid (list, favorites): `src/components/pokemon-grid.tsx`.
 - Header button colour: optional `tintColor` on `HeaderButton` (default `midnight`), e.g. `red` for the filled heart.
+- Options menu (overlay + bottom sheet, `Modal`): `src/components/options-menu.tsx`. Its props come from `usePokemonOptions(selected, onClose)` in `src/hooks/use-pokemon-options.ts`: `<OptionsMenu {...options} />`. Overlay colour: `overlay` token.
+- Share text and Bulbapedia link: `getShareMessage` and `getBulbapediaUrl` in `src/utils/pokemon.ts` (uses `speciesName` from `usePokemon`).
 
 ## Rules
 

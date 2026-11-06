@@ -1,18 +1,24 @@
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ErrorView } from '@/components/error-view';
+import { OptionsMenu } from '@/components/options-menu';
 import { PokemonGrid } from '@/components/pokemon-grid';
 import { Fonts, Spacing } from '@/constants/theme';
 import { useFavorites } from '@/hooks/use-favorites';
+import { usePokemonOptions } from '@/hooks/use-pokemon-options';
 import { useTheme } from '@/hooks/use-theme';
+import type { Favorite } from '@/services/favorites-db';
 
 const SIDE_PADDING = Spacing.four;
 
 export default function FavoritesScreen() {
   const theme = useTheme();
   const { data, error, isPending, refetch } = useFavorites();
+  const [selected, setSelected] = useState<Favorite | null>(null);
+  const options = usePokemonOptions(selected, () => setSelected(null));
 
   let content;
   if (isPending) {
@@ -26,6 +32,7 @@ export default function FavoritesScreen() {
       <PokemonGrid
         pokemon={data}
         onPressPokemon={(id) => router.push({ pathname: '/pokemon/[id]', params: { id } })}
+        onMorePressPokemon={setSelected}
         ListEmptyComponent={
           <View style={styles.empty}>
             <Text style={[styles.emptyTitle, { color: theme.midnight }]}>No favorites yet</Text>
@@ -44,6 +51,7 @@ export default function FavoritesScreen() {
     <SafeAreaView edges={['top']} style={[styles.container, { backgroundColor: theme.daylight }]}>
       <Text style={[styles.title, { color: theme.midnight }]}>My favorites</Text>
       {content}
+      <OptionsMenu {...options} />
     </SafeAreaView>
   );
 }
